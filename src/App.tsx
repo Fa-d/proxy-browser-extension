@@ -2,7 +2,7 @@ import React from "react";
 import { HashRouter, Route, Routes } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import LoginFinal from "./LoginFrom";
-import DashBoard from "./DashBoard";
+import DashBoard from "./DashBoard2";
 import { ServerList } from "./ServerList";
 
 const App = () => {
@@ -22,7 +22,7 @@ const App = () => {
         <HashRouter>
             <Routes>
                 <Route path="/" element={< LoginFinal />} />
-                <Route path="/dashboard" element={< DashBoard />} />
+                <Route path="/dashboard" element={< DashBoard imageUrl={"/Users/kolpolok/webpro/proxy-browser-extension/src/assets/logo.png"} serverName={"Selected server"} />} />
                 <Route path="/serverList" element={< ServerList />} />
             </Routes>
         </HashRouter>

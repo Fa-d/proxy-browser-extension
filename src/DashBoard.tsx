@@ -23,9 +23,8 @@ import {
     useTheme
 } from '@mui/material';
 
-import avatarIcon from "/Users/kolpolok/Documents/WEBTESTS/vite_test/vite-project/src/assets/logo.png"; // or -> import avatarIcon from "@assets/avatar.png";
-
-export default function DashBoard() {
+import avatarIcon from '/Users/kolpolok/webpro/proxy-browser-extension/src/assets/logo.png';
+export default function DashBoard2() {
     const navigate = useNavigate()
     const location = useLocation();
     const myData = location.state?.serverName || 'Default Value';
@@ -49,8 +48,9 @@ export default function DashBoard() {
                     variant='outlined'>
                     <Box sx={{
                         display: 'flex',
-                        flexDirection: 'column-reverse',
-                        alignItems: 'center'
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexDirection: 'column'
                     }} >
                         <Avatar src={avatarIcon} />
                     </Box>
