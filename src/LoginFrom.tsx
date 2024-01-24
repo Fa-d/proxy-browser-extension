@@ -6,8 +6,7 @@ import FormLabel from '@mui/joy/FormLabel';
 import Input from '@mui/joy/Input';
 import Sheet from '@mui/joy/Sheet';
 import Button from '@mui/joy/Button';
-import { flexbox, width } from '@mui/system';
-import { auto } from '@popperjs/core';
+import { Typography as MuiTypography } from '@mui/material';
 import { Navigate, Link, useNavigate } from "react-router-dom";
 
 
@@ -28,6 +27,18 @@ function ModeToggle() {
 
 export default function LoginFinal() {
     const navigate = useNavigate()
+    const [inputUsername, setUsername] = React.useState('');
+    const [inputPassword, setPassword] = React.useState('');
+    const [errorMessage, setErrorMessage] = React.useState('');
+
+    const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setUsername(event.target.value);
+    };
+
+    const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setPassword(event.target.value);
+    };
+
     return (
         <CssVarsProvider>
             <main>
@@ -40,7 +51,8 @@ export default function LoginFinal() {
                         py: 3,
                         px: 2,
                         display: 'flex',
-                        minHeight: 720,
+                        minHeight: 400,
+                        maxHeight: 500,
                         flexDirection: 'column',
                         gap: 2,
                         borderRadius: 'sm',
@@ -60,6 +72,8 @@ export default function LoginFinal() {
                             name="email"
                             type="email"
                             placeholder="example@email.com"
+                            value={inputUsername}
+                            onChange={handleUsernameChange}
                         />
                     </FormControl>
                     <FormControl>
@@ -68,17 +82,32 @@ export default function LoginFinal() {
                             name="password"
                             type='password'
                             placeholder='password'
+                            value={inputPassword}
+                            onChange={handlePasswordChange}
+                            //set toggle password
+                            //endDecorator={<Link href="/forgot-password">Forgot Password?</Link>}      
+
                         />
                     </FormControl>
 
-                    <Button
-                        sx={{ mt: 1 }}
+                    <Button sx={{ mt: 1 }}
                         onClick={() => {
-                            navigate("/dashboard")
-                            // <Navigate to="/dashboard" replace={true} />
+                            console.log(inputUsername)
+                            console.log(inputPassword)
+                            if (inputUsername === "admin" && inputPassword === "admin") {
+                                localStorage.setItem("user", JSON.stringify({ token: true }));
+                                navigate("/dashboard")
+                            } else {
+                                setErrorMessage('Invalid username or password');
+                            }
+                        }}>Log In
+                    </Button>
+                    {errorMessage && (
+                        <MuiTypography  fontSize='sm' color="red" sx={{ mt: 1, alignSelf: 'center',  }}>
+                            {errorMessage}
+                        </MuiTypography>
+                    )}
 
-                        }}
-                    >Log In</Button>
                     <Typography
                         //endDecorator={<Link href="/sign-up">Sign UP</Link>}
                         fontSize='sm'

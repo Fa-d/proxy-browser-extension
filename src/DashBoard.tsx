@@ -1,74 +1,86 @@
-import * as React from 'react';
-import { CssVarsProvider, useColorScheme } from '@mui/joy/styles';
-import Typography from '@mui/joy/Typography';
-import FormControl from '@mui/joy/FormControl';
-import FormLabel from '@mui/joy/FormLabel';
-import Input from '@mui/joy/Input';
+import React from 'react';
 import Sheet from '@mui/joy/Sheet';
-import Button from '@mui/joy/Button';
-import Link from '@mui/joy/Link';
-import { flexbox, width } from '@mui/system';
-import { auto } from '@popperjs/core';
-import { Avatar } from '@mui/joy';
-import { Navigate, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Box, Card, CardContent, Typography, Avatar } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Toolbar from '@mui/material/Toolbar';
+import { Logout } from '@mui/icons-material'
 
-import {
-    Box,
-    Card,
-    CardContent,
-    CardHeader,
-    Stack,
-    SvgIcon,
-    CardActions,
-    useTheme
-} from '@mui/material';
+interface DashboardProps {
+    imageUrl: string;
+    serverName: string;
+}
 
-import avatarIcon from '/Users/kolpolok/webpro/proxy-browser-extension/src/assets/logo.png';
-export default function DashBoard2() {
+const Dashboard: React.FC<DashboardProps> = ({ imageUrl, serverName }) => {
     const navigate = useNavigate()
     const location = useLocation();
-    const myData = location.state?.serverName || 'Default Value';
+    const myData = location.state?.serverName || '----';
+    //   setInterval(showSpeed, 5000);
     return (
-        <CssVarsProvider>
-            <main>
-                <Sheet
-                    sx={{
-                        width: 300,
-                        mx: 'auto',
-                        my: 4,
-                        py: 3,
-                        px: 2,
-                        display: 'flex',
-                        minHeight: 400,
-                        flexDirection: 'column',
-                        gap: 2,
-                        borderRadius: 'sm',
-                        boxShadow: 'md'
-                    }}
-                    variant='outlined'>
-                    <Box sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexDirection: 'column'
-                    }} >
-                        <Avatar src={avatarIcon} />
-                    </Box>
+        <Sheet
+            sx={{
+                width: 300,
+                mx: 'auto',
+                my: 4,
+                py: 3,
+                px: 2,
+                display: 'flex',
+                minHeight: 400,
+                maxHeight: 500,
+                flexDirection: 'column',
+                gap: 2,
+                borderRadius: 'sm',
+                boxShadow: 'md'
+            }}
+            variant='outlined'>
+            <Toolbar>
+                <Logout
+                    sx={{ marginLeft: 'auto' }}
+                    onClick={() => {
+                        console.log("logout");
+                        localStorage.setItem("user", "false");
 
-                    <CardActions sx={{
-                        justifyContent: 'space-evenly',
-                        alignContent: 'flex-end',
-                        flexDirection: 'row'
-                    }}>
-                        <Button variant="outlined"
-                            onClick={() => {
-                                navigate("/serverList")
-                            }} >
+                        navigate("/")
+                    }}
+                >
+                    <ArrowBackIcon />
+                </Logout>
+            </Toolbar>
+
+            <Box
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="center"
+                height="60vh"
+            >
+                <Avatar src={imageUrl} alt="Server" sx={{ width: 150, height: 150 }} onClick={() => {
+                    chrome.runtime.sendMessage({ action: 'setProxy', url: myData });
+                }} />
+                <Card sx={{ mt: 10, width: 300 }} onClick={() => {
+                    navigate("/serverList")
+                }}>
+                    <CardContent>
+                        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                            <Typography variant="h5" component="div">
+                                {serverName}
+                            </Typography>
+                        </Box>
+                        <Typography variant="body2">
                             {myData}
-                        </Button>
-                    </CardActions>
-                </Sheet>
-            </main>
-        </CssVarsProvider>
-    )
+                        </Typography>
+                    </CardContent>
+                </Card>
+            </Box>
+        </Sheet>
+    );
+};
+
+function showSpeed() {
+    chrome.runtime.sendMessage({ action: 'getSpeed' }, (response) => {
+        console.log(response);
+    });
 }
+
+export default Dashboard;
+

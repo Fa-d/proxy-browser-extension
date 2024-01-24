@@ -19,9 +19,63 @@ import Toolbar from '@mui/material/Toolbar';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Typography from '@mui/material/Typography';
 export const ServerList = () => {
+
     const navigate = useNavigate()
 
-    const products = ["One", "Two", "Three", "Four", "Two", "Three", "Four", "Two", "Three", "Four"];
+    const produvtList = [
+        {
+            url: "38.154.227.167:5868",
+            country: "United States",
+            city: "New York",
+        },
+        {
+            url: "185.199.229.156:7492",
+            country: "Spain",
+            city: "Madrird",
+        },
+        {
+            url: "185.199.228.220:7300",
+            country: "Spain",
+            city: "Las Rozas De Madrid",
+        },
+        {
+            url: "185.199.231.45:8382",
+            country: "Spain",
+            city: "Madrid",
+        },
+        {
+            url: "188.74.210.207:6286",
+            country: "Italy",
+            city: "Strada",
+        },
+        {
+            url: "188.74.183.10:8279",
+            country: "United States",
+            city: "New York",
+        },
+        {
+            url: "188.74.210.21:6100",
+            country: "Italy",
+            city: "Strada",
+        },
+        {
+            url: "45.155.68.129:8133",
+            country: "Italy",
+            city: "Strada",
+        },
+        {
+            url: "154.95.36.199:6893",
+            country: "Netherlands",
+            city: "Haarlem",
+        },
+        {
+            url: "45.94.47.66:8110",
+            country: "United States",
+            city: "New York",
+        },
+    ];
+
+
     return (
         <main>
             <Sheet
@@ -33,6 +87,7 @@ export const ServerList = () => {
                     px: 2,
                     display: 'flex',
                     minHeight: 300,
+                    maxHeight: 500,
                     flexDirection: 'column',
                     gap: 2,
                     borderRadius: 'sm',
@@ -48,24 +103,27 @@ export const ServerList = () => {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign: 'center' }}>
                         Server List
                     </Typography>
-                </Toolbar> 
+                </Toolbar>
                 <List> {
-                    products.map((product, index) => {
+                    produvtList.map((product, index) => {
                         return (
-                            <Button
-                                sx={{ width: '100%' }}
-                                variant='outlined'
+                            <Card
+                                sx={{ mt: 2, width: '100%' }}
                                 onClick={() => {
-                                    navigate("/dashboard", { state: { serverName: product } });
+                                    navigate("/dashboard", { state: { serverName: product.url } });
                                 }}>
                                 <ListItem>
-
                                     <ListItemAvatar>
-                                        <Avatar />
+                                        <Avatar sx={{ width: 50, height: 50 }}
+                                        
+                                        />
+
+
                                     </ListItemAvatar>
-                                    <ListItemText primary={product} />
+                                    <ListItemText primary={product.url}
+                                        secondary={product.country} />
                                 </ListItem>
-                            </Button>
+                            </Card>
                         )
                     })
                 }
