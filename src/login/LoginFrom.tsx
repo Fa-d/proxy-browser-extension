@@ -7,8 +7,7 @@ import Input from '@mui/joy/Input';
 import Sheet from '@mui/joy/Sheet';
 import Button from '@mui/joy/Button';
 import { Typography as MuiTypography } from '@mui/material';
-import { Navigate, Link, useNavigate } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
 
 
 function ModeToggle() {
@@ -30,6 +29,11 @@ export default function LoginFinal() {
     const [inputUsername, setUsername] = React.useState('');
     const [inputPassword, setPassword] = React.useState('');
     const [errorMessage, setErrorMessage] = React.useState('');
+    const [showPassword, setShowPassword] = React.useState(false);
+
+    const handleClick = () => {
+        setShowPassword(!showPassword);
+    };
 
     const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setUsername(event.target.value);
@@ -76,26 +80,31 @@ export default function LoginFinal() {
                             onChange={handleUsernameChange}
                         />
                     </FormControl>
+
+                    {/* <PasswordInput
+                        password={inputPassword}
+                        handlePassword={(e) => setPassword(e.target.value)}
+                    /> */}
                     <FormControl>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel>Password</FormLabel>
                         <Input
                             name="password"
-                            type='password'
+                            type={showPassword ? 'text' : 'password'}
                             placeholder='password'
                             value={inputPassword}
                             onChange={handlePasswordChange}
-                            //set toggle password
-                            //endDecorator={<Link href="/forgot-password">Forgot Password?</Link>}      
-
+                            // endDecorator={
+                            //     <PasswordToggle
+                            //         showPassword={showPassword}
+                            //         onClick={handleClick}
+                            //     />}
                         />
                     </FormControl>
 
                     <Button sx={{ mt: 1 }}
                         onClick={() => {
-                            console.log(inputUsername)
-                            console.log(inputPassword)
                             if (inputUsername === "admin" && inputPassword === "admin") {
-                                localStorage.setItem("user", JSON.stringify({ token: true }));
+                                localStorage.setItem("user", "true");
                                 navigate("/dashboard")
                             } else {
                                 setErrorMessage('Invalid username or password');
@@ -103,7 +112,7 @@ export default function LoginFinal() {
                         }}>Log In
                     </Button>
                     {errorMessage && (
-                        <MuiTypography  fontSize='sm' color="red" sx={{ mt: 1, alignSelf: 'center',  }}>
+                        <MuiTypography fontSize='sm' color="red" sx={{ mt: 1, alignSelf: 'center' }}>
                             {errorMessage}
                         </MuiTypography>
                     )}

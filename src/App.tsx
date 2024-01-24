@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { HashRouter, Route, Routes, Navigate } from 'react-router-dom';
-import LoginFinal from "./LoginFrom";
+import { HashRouter, Route, Routes } from 'react-router-dom';
+import LoginFinal from "./login/LoginFrom";
 import DashBoard from "./DashBoard";
 import { ServerList } from "./ServerList";
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import Sheet from '@mui/joy/Sheet';
 import { useNavigate, useLocation } from "react-router-dom";
-import { Box, Card, CardContent, Typography, Avatar } from '@mui/material';
+import { Box, Card, CardContent, Typography, Avatar, CircularProgress } from '@mui/material'; // Import LinearProgress from @mui/material
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Toolbar from '@mui/material/Toolbar';
 import { Logout } from '@mui/icons-material'
@@ -15,7 +15,17 @@ const Dashboard: React.FC<DashboardProps> = ({ imageUrl, serverName }) => {
     const navigate = useNavigate()
     const location = useLocation();
     const myData = location.state?.serverName || '----';
-    //   setInterval(showSpeed, 5000);
+    const [showLatestIP, setLatestIP] = React.useState('');
+
+    const handleLatestIP = async () => {
+        const response = await fetch("https://api.sanweb.info/myip/");
+        var data = await response.json();
+        setLatestIP(data.ip);
+    };
+
+    setInterval(handleLatestIP, 5000);
+    //setInterval(showSpeed, 1000);
+
     return (
         <Sheet
             sx={{
@@ -26,7 +36,6 @@ const Dashboard: React.FC<DashboardProps> = ({ imageUrl, serverName }) => {
                 px: 2,
                 display: 'flex',
                 minHeight: 400,
-                maxHeight: 500,
                 flexDirection: 'column',
                 gap: 2,
                 borderRadius: 'sm',
@@ -39,10 +48,8 @@ const Dashboard: React.FC<DashboardProps> = ({ imageUrl, serverName }) => {
                     onClick={() => {
                         console.log("logout");
                         localStorage.setItem("user", "false");
-
                         navigate("/")
-                    }}
-                >
+                    }}>
                     <ArrowBackIcon />
                 </Logout>
             </Toolbar>
@@ -57,7 +64,12 @@ const Dashboard: React.FC<DashboardProps> = ({ imageUrl, serverName }) => {
                 <Avatar src={imageUrl} alt="Server" sx={{ width: 150, height: 150 }} onClick={() => {
                     chrome.runtime.sendMessage({ action: 'setProxy', url: myData });
                 }} />
-                <Card sx={{ mt: 10, width: 300 }} onClick={() => {
+                <Typography sx={{ mt: 3 }}>
+                    {showLatestIP.length == 0 ? (<CircularProgress />)
+                        : (<Typography> Current IP: {showLatestIP} </Typography>)}
+                </Typography>
+
+                <Card sx={{ mt: 7, width: 300, minHeight: 90 }} onClick={() => {
                     navigate("/serverList")
                 }}>
                     <CardContent>
@@ -66,7 +78,7 @@ const Dashboard: React.FC<DashboardProps> = ({ imageUrl, serverName }) => {
                                 {serverName}
                             </Typography>
                         </Box>
-                        <Typography variant="body2">
+                        <Typography sx={{mt:2}} variant="body2">
                             {myData}
                         </Typography>
                     </CardContent>
@@ -77,9 +89,17 @@ const Dashboard: React.FC<DashboardProps> = ({ imageUrl, serverName }) => {
 };
 
 function showSpeed() {
-    chrome.runtime.sendMessage({ action: 'getSpeed' }, (response) => {
-        console.log(response);
-    });
+    chrome.tabs.query({ active: true, currentWindow: true },
+        function (tabs: chrome.tabs.Tab[]) {
+            var total = 0;
+            for (var i = 0; i < tabs.length; i++) {
+                chrome.storage.local.get([tabs[i].id], function (result) {
+                    total += result[tabs[i].id!!].bytesReceived;
+                })
+            }
+            total = (total * 8) / 1000000;
+            console.log(total);
+        });
 }
 
 export default Dashboard;

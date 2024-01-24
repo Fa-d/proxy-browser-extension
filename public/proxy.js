@@ -54,3 +54,33 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
 });
 
+chrome.webRequest.onBeforeRequest.addListener(
+    function (details) {
+        const size = details.requestBody ? details.requestBody.raw[0].bytes.length : 0;
+        chrome.storage.local.set({
+            [details.tabId]: {
+                startTime: performance.now(),
+                size: size
+            }
+        });
+    },
+    { urls: ["<all_urls>"] }
+);
+
+chrome.webRequest.onCompleted.addListener(
+    function (details) {
+        chrome.storage.local.get([details.tabId], function (result) {
+            const data = result[details.tabId];
+            if (data) {
+                const duration = (performance.now() - data.startTime) / 1000;
+                const speed = data.size / duration;
+                chrome.storage.local.set({
+                    [details.tabId]: {
+                        speed: speed
+                    }
+                });
+            }
+        });
+    },
+    { urls: ["<all_urls>"] }
+);
