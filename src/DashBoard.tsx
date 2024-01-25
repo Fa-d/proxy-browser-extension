@@ -1,10 +1,11 @@
 import React from 'react';
 import Sheet from '@mui/joy/Sheet';
 import { useNavigate, useLocation } from "react-router-dom";
-import { Box, Card, CardContent, Typography, Avatar, CircularProgress } from '@mui/material'; // Import LinearProgress from @mui/material
+import { Box, Card, CardContent, Typography, Avatar, CircularProgress } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Toolbar from '@mui/material/Toolbar';
 import { Logout } from '@mui/icons-material'
+import connectingAnimation from "./assets/connecting.json";
 
 interface DashboardProps {
     imageUrl: string;
@@ -14,18 +15,33 @@ interface DashboardProps {
 const Dashboard: React.FC<DashboardProps> = ({ imageUrl, serverName }) => {
     const navigate = useNavigate()
     const location = useLocation();
-    const myData = location.state?.serverName || '----';
+    const shouldConnectOtherPage = location.state?.shouldConnect || 'false'
     const [showLatestIP, setLatestIP] = React.useState('');
+    const [isConnected, setIsConnected] = React.useState(false);
 
     const handleLatestIP = async () => {
         const response = await fetch("https://api.sanweb.info/myip/");
         var data = await response.json();
         setLatestIP(data.ip);
     };
+    React.useEffect(() => {
+        setConnectedState();
+    }, []);
 
+    function setConnectedState() {
+        setTimeout(() => {
+            chrome.proxy.settings.get({}, function (details) {
+                setIsConnected(details.value.mode !== "direct");
+            });
+        }, 3000);
+    }
     setInterval(handleLatestIP, 5000);
     //setInterval(showSpeed, 1000);
-
+    React.useEffect(() => {
+        if (shouldConnectOtherPage == 'true') {
+            connectDisconnectDecisionBattle(isConnected);
+        }
+    })
     return (
         <Sheet
             sx={{
@@ -54,6 +70,10 @@ const Dashboard: React.FC<DashboardProps> = ({ imageUrl, serverName }) => {
                 </Logout>
             </Toolbar>
 
+            <Typography sx={{ mt: 3, alignSelf: 'center' }}>
+                {isConnected ? 'Connected' : 'Disconnected'}
+            </Typography>
+
             <Box
                 display="flex"
                 flexDirection="column"
@@ -61,9 +81,16 @@ const Dashboard: React.FC<DashboardProps> = ({ imageUrl, serverName }) => {
                 justifyContent="center"
                 height="60vh"
             >
-                <Avatar src={imageUrl} alt="Server" sx={{ width: 150, height: 150 }} onClick={() => {
-                    chrome.runtime.sendMessage({ action: 'setProxy', url: myData });
-                }} />
+                <Avatar src={imageUrl} alt="Server"
+                    sx={{ width: 150, height: 150 }}
+                    onClick={() => {
+                        setConnectedState()
+                        chrome.proxy.settings.get({}, function (details) {
+                            var isConnected = details.value.mode !== "direct"
+                            connectDisconnectDecisionBattle(isConnected);
+                        });
+                    }} />
+
                 <Typography sx={{ mt: 3 }}>
                     {showLatestIP.length == 0 ? (<CircularProgress />)
                         : (<Typography> Current IP: {showLatestIP} </Typography>)}
@@ -78,8 +105,8 @@ const Dashboard: React.FC<DashboardProps> = ({ imageUrl, serverName }) => {
                                 {serverName}
                             </Typography>
                         </Box>
-                        <Typography sx={{mt:2}} variant="body2">
-                            {myData}
+                        <Typography sx={{ mt: 2 }} variant="body2">
+                            {localStorage.getItem("lastSavedServer") || ""}
                         </Typography>
                     </CardContent>
                 </Card>
@@ -100,6 +127,15 @@ function showSpeed() {
             total = (total * 8) / 1000000;
             console.log(total);
         });
+}
+
+function connectDisconnectDecisionBattle(isConnected: Boolean) {
+    const getLastUsedServer = localStorage.getItem("lastSavedServer") || ""
+    if (isConnected) {
+        chrome.runtime.sendMessage({ action: 'setProxy', url: '' });
+    } else {
+        chrome.runtime.sendMessage({ action: 'setProxy', url: getLastUsedServer });
+    }
 }
 
 export default Dashboard;

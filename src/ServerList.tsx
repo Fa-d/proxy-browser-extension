@@ -1,27 +1,12 @@
-import { Avatar, CssVarsProvider, Sheet } from '@mui/joy';
-import {
-    Box,
-    Button,
-    Card,
-    CardActions,
-    CardHeader,
-    Divider,
-    IconButton,
-    List,
-    ListItem,
-    ListItemAvatar,
-    ListItemText,
-    SvgIcon
-} from '@mui/material';
-import { Navigate, useNavigate } from "react-router-dom";
-import AppBar from '@mui/material/AppBar';
+import { Avatar, Sheet } from '@mui/joy';
+import { Card, IconButton, List, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
+import { useNavigate } from "react-router-dom";
 import Toolbar from '@mui/material/Toolbar';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Typography from '@mui/material/Typography';
+
 export const ServerList = () => {
-
     const navigate = useNavigate()
-
     const produvtList = [
         {
             url: "38.154.227.167:5868",
@@ -75,7 +60,6 @@ export const ServerList = () => {
         },
     ];
 
-
     return (
         <main>
             <Sheet
@@ -110,15 +94,12 @@ export const ServerList = () => {
                             <Card
                                 sx={{ mt: 2, width: '100%' }}
                                 onClick={() => {
-                                    navigate("/dashboard", { state: { serverName: product.url } });
+                                    localStorage.setItem("lastSavedServer", product.url);
+                                    navigate("/dashboard", { state: { shouldConnect: 'true' } })
                                 }}>
                                 <ListItem>
                                     <ListItemAvatar>
-                                        <Avatar sx={{ width: 50, height: 50 }}
-                                        
-                                        />
-
-
+                                        <Avatar sx={{ width: 50, height: 50 }} />
                                     </ListItemAvatar>
                                     <ListItemText primary={product.url}
                                         secondary={product.country} />
