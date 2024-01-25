@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { Component } from 'react';
 import Sheet from '@mui/joy/Sheet';
 import { useNavigate, useLocation } from "react-router-dom";
 import { Box, Card, CardContent, Typography, Avatar, CircularProgress } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Toolbar from '@mui/material/Toolbar';
 import { Logout } from '@mui/icons-material'
-import { useLottie } from "lottie-react";
-import connectingAnimation from "./assets/connecting.json";
+import Lottie from 'react-lottie';
+import * as animationPassedData from "./assets/connecting.json";
 
 interface DashboardProps {
     imageUrl: string;
@@ -20,14 +20,6 @@ const Dashboard: React.FC<DashboardProps> = ({ imageUrl, serverName }) => {
     const [showLatestIP, setLatestIP] = React.useState('');
     const [isConnected, setIsConnected] = React.useState(false);
     const [isConnectPressed, setIsConnectPressed] = React.useState(false);
-    const { View } = useLottie({ animationData: connectingAnimation, loop: true });
-
-
-    const handleLatestIP = async () => {
-        const response = await fetch("https://api.sanweb.info/myip/");
-        var data = await response.json();
-        setLatestIP(data.ip);
-    };
 
     React.useEffect(() => { setConnectedState() }, []);
 
@@ -38,8 +30,14 @@ const Dashboard: React.FC<DashboardProps> = ({ imageUrl, serverName }) => {
             });
         }, 3000);
     }
-    setInterval(handleLatestIP, 5000);
-    //setInterval(showSpeed, 1000);
+    React.useEffect(() => {
+        setInterval(async () => {
+            const response = await fetch("https://api.sanweb.info/myip/");
+            var data = await response.json();
+            setLatestIP(data.ip);
+        }, 5000)
+    }, []);
+
     React.useEffect(() => {
         if (shouldConnectOtherPage == 'true') {
             connectDisconnectDecisionBattle(isConnected);
@@ -76,7 +74,18 @@ const Dashboard: React.FC<DashboardProps> = ({ imageUrl, serverName }) => {
             <Typography sx={{ alignSelf: 'center' }}>
                 {isConnected ? 'Connected' : 'Disconnected'}
             </Typography>
-            {isConnectPressed ? <>{View}</> : null}
+
+            {/* {isConnectPressed ?
+                <Lottie
+                    options={{
+                        loop: true,
+                        autoplay: true,
+                        animationData: animationPassedData,
+                    }}
+                    height={400}
+                    width={400}
+                /> : null} */}
+
             <Avatar src={imageUrl} alt="Server"
                 sx={{ width: 150, height: 150, alignSelf: 'center' }}
                 onClick={() => {
@@ -85,10 +94,8 @@ const Dashboard: React.FC<DashboardProps> = ({ imageUrl, serverName }) => {
                         var isConnected = details.value.mode !== "direct"
                         connectDisconnectDecisionBattle(isConnected);
                     });
-
                     setIsConnectPressed(true)
                     setTimeout(() => { setIsConnectPressed(false) }, 2000)
-
                 }} />
 
             <Typography sx={{ mt: 3, alignSelf: 'center' }}>
@@ -96,7 +103,7 @@ const Dashboard: React.FC<DashboardProps> = ({ imageUrl, serverName }) => {
                     : (<Typography> Current IP: {showLatestIP} </Typography>)}
             </Typography>
 
-            <Card sx={{ mt: 7, width: 300, minHeight: 90 }} onClick={() => {
+            <Card sx={{ mt: 4, width: 300, minHeight: 90 }} onClick={() => {
                 navigate("/serverList")
             }}>
                 <CardContent>

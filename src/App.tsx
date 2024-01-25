@@ -25,9 +25,7 @@ const App = () => {
                             <DashBoard
                                 imageUrl={"/Users/kolpolok/webpro/proxy-browser-extension/src/assets/logo.png"}
                                 serverName={"Selected server"}
-                            />
-                            :
-                            <LoginFinal />
+                            /> : <LoginFinal />
                     } />
                 <Route path="/dashboard" element={<DashBoard imageUrl={"/Users/kolpolok/webpro/proxy-browser-extension/src/assets/logo.png"} serverName={"Selected server"} />} />
                 <Route path="/serverList" element={<ServerList />} />
