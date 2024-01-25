@@ -5,6 +5,7 @@ import { Box, Card, CardContent, Typography, Avatar, CircularProgress } from '@m
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Toolbar from '@mui/material/Toolbar';
 import { Logout } from '@mui/icons-material'
+import { useLottie } from "lottie-react";
 import connectingAnimation from "./assets/connecting.json";
 
 interface DashboardProps {
@@ -18,15 +19,17 @@ const Dashboard: React.FC<DashboardProps> = ({ imageUrl, serverName }) => {
     const shouldConnectOtherPage = location.state?.shouldConnect || 'false'
     const [showLatestIP, setLatestIP] = React.useState('');
     const [isConnected, setIsConnected] = React.useState(false);
+    const [isConnectPressed, setIsConnectPressed] = React.useState(false);
+    const { View } = useLottie({ animationData: connectingAnimation, loop: true });
+
 
     const handleLatestIP = async () => {
         const response = await fetch("https://api.sanweb.info/myip/");
         var data = await response.json();
         setLatestIP(data.ip);
     };
-    React.useEffect(() => {
-        setConnectedState();
-    }, []);
+
+    React.useEffect(() => { setConnectedState() }, []);
 
     function setConnectedState() {
         setTimeout(() => {
@@ -70,47 +73,44 @@ const Dashboard: React.FC<DashboardProps> = ({ imageUrl, serverName }) => {
                 </Logout>
             </Toolbar>
 
-            <Typography sx={{ mt: 3, alignSelf: 'center' }}>
+            <Typography sx={{ alignSelf: 'center' }}>
                 {isConnected ? 'Connected' : 'Disconnected'}
             </Typography>
+            {isConnectPressed ? <>{View}</> : null}
+            <Avatar src={imageUrl} alt="Server"
+                sx={{ width: 150, height: 150, alignSelf: 'center' }}
+                onClick={() => {
+                    setConnectedState()
+                    chrome.proxy.settings.get({}, function (details) {
+                        var isConnected = details.value.mode !== "direct"
+                        connectDisconnectDecisionBattle(isConnected);
+                    });
 
-            <Box
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                justifyContent="center"
-                height="60vh"
-            >
-                <Avatar src={imageUrl} alt="Server"
-                    sx={{ width: 150, height: 150 }}
-                    onClick={() => {
-                        setConnectedState()
-                        chrome.proxy.settings.get({}, function (details) {
-                            var isConnected = details.value.mode !== "direct"
-                            connectDisconnectDecisionBattle(isConnected);
-                        });
-                    }} />
+                    setIsConnectPressed(true)
+                    setTimeout(() => { setIsConnectPressed(false) }, 2000)
 
-                <Typography sx={{ mt: 3 }}>
-                    {showLatestIP.length == 0 ? (<CircularProgress />)
-                        : (<Typography> Current IP: {showLatestIP} </Typography>)}
-                </Typography>
+                }} />
 
-                <Card sx={{ mt: 7, width: 300, minHeight: 90 }} onClick={() => {
-                    navigate("/serverList")
-                }}>
-                    <CardContent>
-                        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                            <Typography variant="h5" component="div">
-                                {serverName}
-                            </Typography>
-                        </Box>
-                        <Typography sx={{ mt: 2 }} variant="body2">
-                            {localStorage.getItem("lastSavedServer") || ""}
+            <Typography sx={{ mt: 3, alignSelf: 'center' }}>
+                {showLatestIP.length == 0 ? (<CircularProgress />)
+                    : (<Typography> Current IP: {showLatestIP} </Typography>)}
+            </Typography>
+
+            <Card sx={{ mt: 7, width: 300, minHeight: 90 }} onClick={() => {
+                navigate("/serverList")
+            }}>
+                <CardContent>
+                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                        <Typography variant="h5" component="div">
+                            {serverName}
                         </Typography>
-                    </CardContent>
-                </Card>
-            </Box>
+                    </Box>
+                    <Typography sx={{ mt: 2 }} variant="body2">
+                        {localStorage.getItem("lastSavedServer") || ""}
+                    </Typography>
+                </CardContent>
+            </Card>
+
         </Sheet>
     );
 };
