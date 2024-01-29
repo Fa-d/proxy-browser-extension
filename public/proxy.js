@@ -29,7 +29,7 @@ function setProxy(passedUrl) {
                 bypassList: ["localhost"]
             }
         };
-    }
+     }
 
     chrome.proxy.settings.set({
         value: config,

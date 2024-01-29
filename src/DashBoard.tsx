@@ -5,8 +5,8 @@ import { Box, Card, CardContent, Typography, Avatar, CircularProgress } from '@m
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Toolbar from '@mui/material/Toolbar';
 import { Logout } from '@mui/icons-material'
-import Lottie from 'react-lottie';
-import * as animationPassedData from "./assets/connecting.json";
+import Lottie from "lottie-react";
+import animationPassedData from "./assets/connecting.json";
 
 interface DashboardProps {
     imageUrl: string;
@@ -28,14 +28,14 @@ const Dashboard: React.FC<DashboardProps> = ({ imageUrl, serverName }) => {
             chrome.proxy.settings.get({}, function (details) {
                 setIsConnected(details.value.mode !== "direct");
             });
-        }, 3000);
+        }, 2000);
     }
     React.useEffect(() => {
         setInterval(async () => {
             const response = await fetch("https://api.sanweb.info/myip/");
             var data = await response.json();
             setLatestIP(data.ip);
-        }, 5000)
+        }, 2000)
     }, []);
 
     React.useEffect(() => {
@@ -71,33 +71,38 @@ const Dashboard: React.FC<DashboardProps> = ({ imageUrl, serverName }) => {
                 </Logout>
             </Toolbar>
 
-            <Typography sx={{ alignSelf: 'center' }}>
-                {isConnected ? 'Connected' : 'Disconnected'}
-            </Typography>
 
-            {/* {isConnectPressed ?
-                <Lottie
-                    options={{
-                        loop: true,
-                        autoplay: true,
-                        animationData: animationPassedData,
+            {isConnected ?
+                <Typography variant="h5" sx={{ alignSelf: 'center', color: '#6897BB' }}>
+                    {isConnectPressed ? 'Disconnecting' : 'Connected'}
+                </Typography> :
+                <Typography variant="h5" sx={{ alignSelf: 'center', color: '#d9534f' }}>
+                    {isConnectPressed ? 'Connecting' : 'Disconnected'}
+                </Typography>
+            }
+
+            {isConnectPressed ?
+                <Box sx={{ width: 200, height: 200, alignSelf: 'center' }}>
+                    <Lottie animationData={animationPassedData} />
+                </Box> :
+                <Avatar src={imageUrl} alt="Server"
+                    sx={{
+                        mt: 3,
+                        width: 150,
+                        height: 150,
+                        alignSelf: 'center',
+                        backgroundColor: isConnected ? '#6897BB' : '#d9534f'
                     }}
-                    height={400}
-                    width={400}
-                /> : null} */}
-
-            <Avatar src={imageUrl} alt="Server"
-                sx={{ width: 150, height: 150, alignSelf: 'center' }}
-                onClick={() => {
-                    setConnectedState()
-                    chrome.proxy.settings.get({}, function (details) {
-                        var isConnected = details.value.mode !== "direct"
-                        connectDisconnectDecisionBattle(isConnected);
-                    });
-                    setIsConnectPressed(true)
-                    setTimeout(() => { setIsConnectPressed(false) }, 2000)
-                }} />
-
+                    onClick={() => {
+                        setConnectedState()
+                        chrome.proxy.settings.get({}, function (details) {
+                            var isConnected = details.value.mode !== "direct"
+                            connectDisconnectDecisionBattle(isConnected);
+                        });
+                        setIsConnectPressed(true)
+                        setTimeout(() => { setIsConnectPressed(false) }, 2000)
+                    }} />
+            }
             <Typography sx={{ mt: 3, alignSelf: 'center' }}>
                 {showLatestIP.length == 0 ? (<CircularProgress />)
                     : (<Typography> Current IP: {showLatestIP} </Typography>)}
