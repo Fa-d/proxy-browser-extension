@@ -46,7 +46,6 @@ export default function LoginFinal() {
     return (
         <CssVarsProvider>
             <main>
-                <ModeToggle />
                 <Sheet
                     sx={{
                         width: 300,
@@ -62,8 +61,7 @@ export default function LoginFinal() {
                         borderRadius: 'sm',
                         boxShadow: 'md'
                     }}
-                    variant='outlined'
-                >
+                    variant='outlined' >
                     <div>
                         <Typography level='h4' component={'h1'}>
                             <b>Welcome!</b>
@@ -93,11 +91,11 @@ export default function LoginFinal() {
                             placeholder='password'
                             value={inputPassword}
                             onChange={handlePasswordChange}
-                            // endDecorator={
-                            //     <PasswordToggle
-                            //         showPassword={showPassword}
-                            //         onClick={handleClick}
-                            //     />}
+                        // endDecorator={
+                        //     <PasswordToggle
+                        //         showPassword={showPassword}
+                        //         onClick={handleClick}
+                        //     />}
                         />
                     </FormControl>
 

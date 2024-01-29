@@ -1,19 +1,21 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Sheet from '@mui/joy/Sheet';
 import { useNavigate, useLocation } from "react-router-dom";
-import { Box, Card, CardContent, Typography, Avatar, CircularProgress } from '@mui/material';
+import { Box, Card, CardContent, Typography, Avatar, CircularProgress, IconButton, List, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Toolbar from '@mui/material/Toolbar';
 import { Logout } from '@mui/icons-material'
 import Lottie from "lottie-react";
 import animationPassedData from "./assets/connecting.json";
+import { CloudUploadOutlined, CloudDownloadRounded } from '@mui/icons-material';
 
 interface DashboardProps {
     imageUrl: string;
     serverName: string;
+    lState: () => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ imageUrl, serverName }) => {
+const Dashboard: React.FC<DashboardProps> = ({ imageUrl, serverName, lState }) => {
     const navigate = useNavigate()
     const location = useLocation();
     const shouldConnectOtherPage = location.state?.shouldConnect || 'false'
@@ -63,9 +65,9 @@ const Dashboard: React.FC<DashboardProps> = ({ imageUrl, serverName }) => {
                 <Logout
                     sx={{ marginLeft: 'auto' }}
                     onClick={() => {
-                        console.log("logout");
                         localStorage.setItem("user", "false");
-                        navigate("/")
+                        lState();
+                        navigate("/");
                     }}>
                     <ArrowBackIcon />
                 </Logout>
