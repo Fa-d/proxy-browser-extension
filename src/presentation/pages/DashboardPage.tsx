@@ -15,6 +15,7 @@ import animationPassedData from "../assets/connecting.json";
 import { CloudUploadOutlined, CloudDownloadRounded } from '@mui/icons-material';
 import { useSpeedometer } from '../hooks/useSpeedometer';
 
+
 import { useAuth } from '../hooks/useAuth';
 import { useProxy } from '../hooks/useProxy';
 import { useServers } from '../hooks/useServers';
@@ -41,6 +42,7 @@ const DashboardPage: React.FC = () => {
     // serverError: useServersError // Potential error from useServers hook
   } = useServers();
   const { speedInfo, isLoading: isLoadingSpeed } = useSpeedometer();
+
 
   // This state is to manage the visual "connecting..." / "disconnecting..." state for the Lottie animation
   const [isProcessingProxyAction, setIsProcessingProxyAction] = useState(false);
@@ -177,6 +179,7 @@ const DashboardPage: React.FC = () => {
           )}
         </Box>
       </Box>
+
 
       {isProcessingProxyAction || isConnecting ? ( // Show Lottie if processing or if hook reports connecting
         <Box sx={{ width: 200, height: 200, alignSelf: 'center' }}>
