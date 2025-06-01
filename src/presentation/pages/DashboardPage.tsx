@@ -12,6 +12,9 @@ import Lottie from "lottie-react";
 import animationPassedData from "../assets/connecting.json";
 // CloudUploadOutlined, CloudDownloadRounded icons seem unused, consider removing
 // import { CloudUploadOutlined, CloudDownloadRounded } from '@mui/icons-material';
+import { CloudUploadOutlined, CloudDownloadRounded } from '@mui/icons-material';
+import { useSpeedometer } from '../hooks/useSpeedometer';
+
 
 import { useAuth } from '../hooks/useAuth';
 import { useProxy } from '../hooks/useProxy';
@@ -38,6 +41,8 @@ const DashboardPage: React.FC = () => {
     fetchSelectedServer,
     // serverError: useServersError // Potential error from useServers hook
   } = useServers();
+  const { speedInfo, isLoading: isLoadingSpeed } = useSpeedometer();
+
 
   // This state is to manage the visual "connecting..." / "disconnecting..." state for the Lottie animation
   const [isProcessingProxyAction, setIsProcessingProxyAction] = useState(false);
@@ -139,6 +144,42 @@ const DashboardPage: React.FC = () => {
       <Typography variant="h5" sx={{ alignSelf: 'center', color: connectionDetails.isConnected ? '#6897BB' : '#d9534f' }}>
         {isProcessingProxyAction ? (connectionDetails.isConnected ? 'Disconnecting...' : 'Connecting...') : (connectionDetails.isConnected ? 'Connected' : 'Disconnected')}
       </Typography>
+
+      {/* Speedometer Section */}
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'space-around',
+        width: '100%',
+        mt: 2,
+        p: 1,
+        border: '1px solid',
+        borderColor: 'divider',
+        borderRadius: 'sm'
+      }}>
+        <Box sx={{ textAlign: 'center' }}>
+          <CloudDownloadRounded sx={{ color: 'primary.main' }} />
+          <Typography variant="body2">Download</Typography>
+          {isLoadingSpeed ? (
+            <CircularProgress size={20} />
+          ) : speedInfo ? (
+            <Typography variant="h6">{speedInfo.downloadSpeed} {speedInfo.downloadUnit}</Typography>
+          ) : (
+            <Typography variant="h6">0 B/s</Typography>
+          )}
+        </Box>
+        <Box sx={{ textAlign: 'center' }}>
+          <CloudUploadOutlined sx={{ color: 'secondary.main' }} />
+          <Typography variant="body2">Upload</Typography>
+          {isLoadingSpeed ? (
+            <CircularProgress size={20} />
+          ) : speedInfo ? (
+            <Typography variant="h6">{speedInfo.uploadSpeed} {speedInfo.uploadUnit}</Typography>
+          ) : (
+            <Typography variant="h6">0 B/s</Typography>
+          )}
+        </Box>
+      </Box>
+
 
       {isProcessingProxyAction || isConnecting ? ( // Show Lottie if processing or if hook reports connecting
         <Box sx={{ width: 200, height: 200, alignSelf: 'center' }}>
