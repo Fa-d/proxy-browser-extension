@@ -17,7 +17,7 @@ export const useProxy = () => {
     // setIsPolling(true); // Indicate background activity
     setError(null);
     try {
-      const details = await proxyService.executeGetConnectionDetails();
+      const details = await proxyService.getConnectionDetails();
       setConnectionDetails(details);
     } catch (err: any) {
       console.error("useProxy - fetchConnectionDetails error:", err);
@@ -43,7 +43,7 @@ export const useProxy = () => {
     setIsLoading(true);
     setError(null);
     try {
-      await proxyService.executeConnect(server);
+      await proxyService.connect(server);
       // After connect, refresh details
       await fetchConnectionDetails();
     } catch (err: any) {
@@ -60,7 +60,7 @@ export const useProxy = () => {
     setIsLoading(true);
     setError(null);
     try {
-      await proxyService.executeDisconnect();
+      await proxyService.disconnect();
       // After disconnect, refresh details
       await fetchConnectionDetails();
     } catch (err: any) {

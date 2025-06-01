@@ -14,7 +14,7 @@ export const useServers = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const srvs = await serverService.executeGetServers();
+      const srvs = await serverService.getServers();
       setServers(srvs);
     } catch (err: any) {
       console.error("useServers - fetchServers error:", err);
@@ -28,7 +28,7 @@ export const useServers = () => {
     // No separate loading state for this, often called with other actions
     setError(null);
     try {
-      const srv = await serverService.executeGetSelectedServer();
+      const srv = await serverService.getSelectedServer();
       setSelectedServer(srv);
     } catch (err: any) {
       console.error("useServers - fetchSelectedServer error:", err);
@@ -40,7 +40,7 @@ export const useServers = () => {
     // No separate loading state for this, typically a quick operation
     setError(null);
     try {
-      await serverService.executeSelectServer(server);
+      await serverService.selectServer(server);
       setSelectedServer(server); // Optimistically update or re-fetch
     } catch (err: any) {
       console.error("useServers - selectServer error:", err);

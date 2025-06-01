@@ -16,7 +16,7 @@ export const useAuth = () => {
     setIsLoading(true);
     setAuthError(null);
     try {
-      const user = await authService.executeGetProfile();
+      const user = await authService.getProfile();
       setCurrentUser(user);
     } catch (error: any) {
       console.error("useAuth - checkUserSession error:", error);
@@ -35,7 +35,7 @@ export const useAuth = () => {
     setIsLoading(true);
     setAuthError(null);
     try {
-      const user = await authService.executeLogin(credentials);
+      const user = await authService.login(credentials);
       setCurrentUser(user);
       if (user) {
         navigateTo('/dashboard'); // Navigate on successful login
@@ -55,7 +55,7 @@ export const useAuth = () => {
     setIsLoading(true);
     setAuthError(null);
     try {
-      await authService.executeLogout();
+      await authService.logout();
       setCurrentUser(null);
       navigateTo('/'); // Navigate to login page on logout
     } catch (error: any) {

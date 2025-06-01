@@ -9,16 +9,12 @@ declare global {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       function sendMessage(message: any, callback?: (response: any) => void): void;
     }
-    namespace proxy {
-      namespace settings {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        function get(details: object, callback: (details: { value: any }) => void): void;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        function set(details: { value: any, scope?: string }, callback?: () => void): void;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        function clear(details: { scope?: string }, callback?: () => void): void;
-      }
-    }
+    // Removed:
+    // namespace proxy {
+    //   namespace settings {
+    //     ...
+    //   }
+    // }
   }
 }
 
