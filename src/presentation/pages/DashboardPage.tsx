@@ -17,7 +17,7 @@ import Lottie from "lottie-react";
 import animationPassedData from "../assets/connecting.json";
 import { useLocation } from "react-router-dom";
 import { useSpeedometer } from '../hooks/useSpeedometer';
-import { useAuth } from '../hooks/useAuth';
+// import { useAuth } from '../hooks/useAuth'; // REMOVE if only used for logout and profile info
 import { useProxy } from '../hooks/useProxy';
 import { useServers } from '../hooks/useServers';
 import { navigateTo } from '../../infrastructure/navigation/RouterService';
@@ -25,7 +25,7 @@ import { navigateTo } from '../../infrastructure/navigation/RouterService';
 const DashboardPage: React.FC = () => {
   const theme = useTheme();
   const location = useLocation();
-  const { logout } = useAuth();
+  // const { logout, currentUser, userDetails } = useAuth(); // REMOVE
   const {
     connectionDetails,
     isConnecting,
@@ -70,9 +70,9 @@ const DashboardPage: React.FC = () => {
     setTimeout(() => setIsProcessingProxyAction(false), 1200);
   };
 
-  const handleLogout = () => {
-    logout();
-  };
+  // const handleLogout = () => { // REMOVE
+  //   logout();
+  // };
 
   const defaultImageUrl = "/vite.svg";
   const displayServerName = selectedServer?.city || selectedServer?.country || "Select a server";
@@ -90,7 +90,19 @@ const DashboardPage: React.FC = () => {
   }
 
   return (
-    <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center" bgcolor={theme.palette.background.default}>
+    // Adjust root Box for BottomNavLayout
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column', // Keep if page itself needs to manage flex internally
+        alignItems: 'center',
+        justifyContent: 'center', // To center the card
+        width: '100%', // Take full width from parent
+        flexGrow: 1, // Allow it to grow in the layout's main area
+        p: 2, // Add some padding if needed, or rely on Card margins
+        boxSizing: 'border-box',
+      }}
+    >
       <Card sx={{
         minWidth: 350,
         maxWidth: 400,
@@ -105,12 +117,11 @@ const DashboardPage: React.FC = () => {
           <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center', fontWeight: 700, letterSpacing: 1 }}>
             Dashboard
           </Typography>
-          <IconButton onClick={handleLogout} aria-label="logout" size="large" sx={{ color: theme.palette.text.secondary }}>
-            <LogoutIcon />
-          </IconButton>
+          {/* Logout IconButton removed from here */}
         </Toolbar>
         <Divider />
         <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', px: 4, py: 3 }}>
+          {/* User Profile Display Section REMOVED from here */}
           <Typography
             variant="subtitle1"
             sx={{
