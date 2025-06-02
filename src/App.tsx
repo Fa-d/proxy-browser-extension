@@ -4,8 +4,8 @@ import { useAuth } from './presentation/hooks/useAuth';
 import LoginPage from './presentation/pages/LoginPage';
 import DashboardPage from './presentation/pages/DashboardPage';
 import {ServerListPage} from './presentation/pages/ServerListPage';
-import ProfilePage from './presentation/pages/ProfilePage'; // Added
-import BottomNavLayout from './presentation/components/BottomNavLayout'; // Added
+import ProfilePage from './presentation/pages/ProfilePage';
+import BottomNavLayout from './presentation/components/BottomNavLayout';
 import { Box, CircularProgress } from '@mui/material';
 import { HashRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { setNavigate } from './infrastructure/navigation/RouterService';

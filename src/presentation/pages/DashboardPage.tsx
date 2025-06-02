@@ -6,12 +6,12 @@ import {
   Typography,
   Avatar,
   CircularProgress,
-  IconButton,
+  // IconButton, // Removed as it's not used
   Button,
   Divider,
   useTheme,
 } from '@mui/material';
-import { Logout as LogoutIcon, CloudUploadOutlined, CloudDownloadRounded, ArrowForwardIos } from '@mui/icons-material';
+import { CloudUploadOutlined, CloudDownloadRounded, ArrowForwardIos } from '@mui/icons-material'; // Removed Logout as LogoutIcon
 import Toolbar from '@mui/material/Toolbar';
 import Lottie from "lottie-react";
 import animationPassedData from "../assets/connecting.json";
@@ -76,7 +76,7 @@ const DashboardPage: React.FC = () => {
 
   if (!connectionDetails) {
     return (
-      <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center" bgcolor={theme.palette.background.default}>
+      <Box height="100%" display="flex" alignItems="center" justifyContent="center" bgcolor={theme.palette.background.default}>
         <Card sx={{ p: 4, minWidth: 340, borderRadius: 3, boxShadow: 6, textAlign: 'center' }}>
           <CircularProgress />
           <Typography sx={{ mt: 2 }}>Loading dashboard...</Typography>

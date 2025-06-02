@@ -1,6 +1,5 @@
 import { Server } from '../../domain/models/Server';
 import { ServerRepository } from '../../domain/repositories/ServerRepository';
-// import { HardcodedServerRepository } from '../../infrastructure/repositories/HardcodedServerRepository';
 import { ApiServerRepository } from '../../infrastructure/repositories/ApiServerRepository';
 
 export class ServerService {

@@ -13,6 +13,3 @@ export const navigateTo = (path: string, options?: { state?: unknown, replace?: 
     console.error("RouterService: Navigate function not set. Call setNavigate from your main router component.");
   }
 };
-
-// Add other navigation functions if needed, e.g.:
-// export const goBack = () => { ... };

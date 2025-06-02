@@ -9,11 +9,8 @@ export const useSpeedometer = () => {
   const [speedInfo, setSpeedInfo] = useState<SpeedInfo | null>(null);
   const [currentMonitoringTabId, setCurrentMonitoringTabId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true); // True initially until first data comes
-  // Error state can be added if SpeedService methods can throw errors to be shown on UI
-  // const [error, setError] = useState<string | null>(null);
 
   const fetchSpeed = useCallback(async () => {
-    // setError(null);
     try {
       const info = await speedService.getCurrentSpeed();
       setSpeedInfo(info);
@@ -25,7 +22,6 @@ export const useSpeedometer = () => {
       }
     } catch (err: any) {
       console.error("useSpeedometer - fetchSpeed error:", err);
-      // setError(err.message || "Failed to fetch speed info");
       setIsLoading(false); // Stop loading on error too
     }
   }, [isLoading]); // Include isLoading to allow effect to re-evaluate if it changes
@@ -47,7 +43,6 @@ export const useSpeedometer = () => {
         if (isActive && tabs && tabs.length > 0 && tabs[0].id != null) {
           const activeTabId = tabs[0].id;
           if (currentMonitoringTabId !== activeTabId) {
-            // console.log(`useSpeedometer: Active tab changed to ${activeTabId}. Starting monitoring.`);
             speedService.startMonitoringForTab(activeTabId);
             setCurrentMonitoringTabId(activeTabId);
             setIsLoading(true); // Set loading when tab changes until first data for new tab
@@ -61,7 +56,6 @@ export const useSpeedometer = () => {
 
         } else if (currentMonitoringTabId !== null) {
           // No active tab found, or tab has no ID, stop monitoring
-          // console.log("useSpeedometer: No active tab or tab ID missing. Stopping monitoring.");
           speedService.stopMonitoringForAllTabs();
           setCurrentMonitoringTabId(null);
           setSpeedInfo(null);
@@ -79,7 +73,6 @@ export const useSpeedometer = () => {
 
     // Listener for tab activation changes
     const handleTabActivated = (activeInfo: chrome.tabs.TabActiveInfo) => {
-      // console.log("useSpeedometer: Tab activated event", activeInfo);
       // Re-run monitoring management when tab changes
       // Reset loading state for the new tab.
       setIsLoading(true);
@@ -90,12 +83,8 @@ export const useSpeedometer = () => {
     const handleTabUpdated = (tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) => {
         // If the updated tab is the one we are monitoring and URL has changed (navigation)
         if (tabId === currentMonitoringTabId && changeInfo.url) {
-            // console.log(`useSpeedometer: Monitored tab ${tabId} updated URL to ${changeInfo.url}. Re-evaluating monitoring.`);
             // Potentially reset speed data or re-initiate monitoring if needed,
             // for now, continuous monitoring should handle it.
-            // setIsLoading(true);
-            // setSpeedInfo(null);
-            // manageMonitoring(); // Could re-trigger to reset states if necessary
         }
     };
 
@@ -108,7 +97,6 @@ export const useSpeedometer = () => {
 
     return () => {
       isActive = false;
-      // console.log("useSpeedometer: Cleanup. Stopping monitoring and clearing interval.");
       if (intervalId) clearInterval(intervalId);
       speedService.stopMonitoringForAllTabs();
       if (chrome.tabs && chrome.tabs.onActivated) {

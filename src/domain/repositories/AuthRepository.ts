@@ -17,5 +17,5 @@ export interface AuthRepository {
   login(credentials: AuthCredentials): Promise<User | null>;
   logout(): Promise<void>;
   getCurrentUser(): Promise<User | null>;
-  getUserDetails(): Promise<UserDetails | null>; // New method
+  getUserDetails(): Promise<UserDetails | null>;
 }

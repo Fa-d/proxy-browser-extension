@@ -4,7 +4,7 @@ import { Box, Paper } from '@mui/material';
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import HomeIcon from '@mui/icons-material/Home';
-import StorageIcon from '@mui/icons-material/Storage'; // Or DnsIcon, ListIcon, LanguageIcon
+import StorageIcon from '@mui/icons-material/Storage';
 import PersonIcon from '@mui/icons-material/Person';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -33,7 +33,6 @@ const BottomNavLayout: React.FC<BottomNavLayoutProps> = ({ children }) => {
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     // No need to setValue here as the useEffect above will handle it when location.pathname changes.
-    // setValue(newValue); // This would make the tab change instantly, but effect handles it via path change.
     navigate(newValue);
   };
 

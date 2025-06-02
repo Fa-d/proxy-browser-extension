@@ -1,18 +1,16 @@
 import { Server } from '../../domain/models/Server';
 import { ServerRepository } from '../../domain/repositories/ServerRepository';
-import { IpBundleItem } from '../api/RealAuthApi'; // Assuming RealAuthApi exports this
+import { IpBundleItem } from '../api/RealAuthApi';
 
 const IP_BUNDLE_STORAGE_KEY = 'ipBundle'; // Must match key used in LocalStorageAuthRepository
 const SELECTED_SERVER_STORAGE_KEY = 'selectedServer';
 
 export class ApiServerRepository implements ServerRepository {
-  // constructor() {} // Constructor not needed if it's empty
 
   async getServers(): Promise<Server[]> {
     const ipBundleJson = localStorage.getItem(IP_BUNDLE_STORAGE_KEY);
     if (!ipBundleJson) {
       // This is a normal scenario if the user hasn't logged in or bundle is not set
-      // console.log('ApiServerRepository: No IP bundle found in localStorage.');
       return [];
     }
 
