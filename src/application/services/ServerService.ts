@@ -1,12 +1,14 @@
 import { Server } from '../../domain/models/Server';
 import { ServerRepository } from '../../domain/repositories/ServerRepository';
-import { HardcodedServerRepository } from '../../infrastructure/repositories/HardcodedServerRepository';
+// import { HardcodedServerRepository } from '../../infrastructure/repositories/HardcodedServerRepository';
+import { ApiServerRepository } from '../../infrastructure/repositories/ApiServerRepository';
 
 export class ServerService { // Removed "implements GetServers, GetSelectedServer, SelectServer"
   private serverRepository: ServerRepository;
 
   constructor() {
-    this.serverRepository = new HardcodedServerRepository();
+    // this.serverRepository = new HardcodedServerRepository();
+    this.serverRepository = new ApiServerRepository();
   }
 
   async getServers(): Promise<Server[]> { // Renamed from executeGetServers
