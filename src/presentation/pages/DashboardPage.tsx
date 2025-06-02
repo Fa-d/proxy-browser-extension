@@ -117,20 +117,6 @@ const DashboardPage: React.FC = () => {
         <Divider />
         <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', px: 4, py: 3 }}>
 
-          {currentUser && userDetails && (
-            <Box sx={{ textAlign: 'center', mb: 2, width: '100%' }}>
-              <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>
-                Welcome, {userDetails.fullName || currentUser.email}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Package: {userDetails.packageName}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Expires on: {userDetails.validityDate}
-              </Typography>
-              <Divider sx={{ my: 2 }} /> {/* Divider after user details */}
-            </Box>
-          )}
           <Typography
             variant="subtitle1"
             sx={{
