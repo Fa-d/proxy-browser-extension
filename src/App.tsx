@@ -4,6 +4,9 @@ import { useAuth } from './presentation/hooks/useAuth';
 import LoginPage from './presentation/pages/LoginPage';
 import DashboardPage from './presentation/pages/DashboardPage';
 import ServerListPage from './presentation/pages/ServerListPage';
+import ProfilePage from './presentation/pages/ProfilePage'; // Added
+import BottomNavLayout from './presentation/components/BottomNavLayout'; // Added
+
 import { Box, CircularProgress } from '@mui/material';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { setNavigate } from './infrastructure/navigation/RouterService';
@@ -43,15 +46,26 @@ const AppContent: React.FC = () => {
 
   // After loading, decide which set of routes to show
   if (currentUser) {
-    // User is logged in, show protected routes
-    // The initial path for a logged-in user will be /dashboard due to the Navigate below
+    // User is logged in, show protected routes with BottomNavLayout
     return (
       <Routes>
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/serverList" element={<ServerListPage />} />
-        {/* Redirect any other path to dashboard if logged in */}
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
-      </Routes>
+        <Route element={<BottomNavLayout />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/serverList" element={<ServerListPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          {/*
+            Default route for logged-in users.
+            If user navigates to extension root ('/' in HashRouter, which is often the base path)
+            and they are logged in, redirect to /dashboard.
+          */}
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        </Route>
+        {/*
+          Fallback for any authenticated route not matching the layout routes.
+          This ensures that if a user somehow lands on e.g. /unknown while logged in,
+          they are redirected to a safe default like /dashboard.
+        */}
+
     );
   } else {
     // User is not logged in, show public routes
