@@ -9,8 +9,8 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle'; // Standard M
 const ProfilePage: React.FC = () => {
   const { currentUser, userDetails, logout, isLoading } = useAuth();
 
-  // Combined loading check for initial data fetch
-  if (isLoading || (!currentUser && !userDetails && !isLoading)) {
+  // When isLoading is true, display only the CircularProgress centered
+  if (isLoading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'calc(100vh - 112px)', p: 3 }}>
         {/* 112px approx for top bar (if any) + bottom nav */}
@@ -19,9 +19,11 @@ const ProfilePage: React.FC = () => {
     );
   }
 
-  // This state should ideally be prevented by the router redirecting to /login
-  // if currentUser is null after isLoading is false.
+  // When not loading, check if currentUser exists
   if (!currentUser) {
+    // Fallback for !currentUser (when not loading)
+    // This state should ideally be prevented by the router redirecting to /login
+    // if currentUser is null after isLoading is false.
     return (
       <Box sx={{ p: 3, textAlign: 'center' }}>
         <Typography variant="h6">User not found</Typography>
@@ -30,6 +32,7 @@ const ProfilePage: React.FC = () => {
     );
   }
 
+  // If isLoading is false AND currentUser exists, render user details and Logout button
   // Provide fallbacks for display if userDetails is not fully populated but currentUser exists
   const displayName = userDetails?.fullName || currentUser.email;
   const displayPackage = userDetails?.packageName || 'N/A';

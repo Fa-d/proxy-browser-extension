@@ -2,9 +2,6 @@ import { User } from '../../domain/models/User';
 import { AuthCredentials, AuthRepository, UserDetails } from '../../domain/repositories/AuthRepository';
 // No longer "implements LoginUser, LogoutUser, GetProfile" to avoid 'execute' signature issues
 // The hooks will call the specific methods like login, logout, getProfile.
-// import { LoginUser } from '../../domain/usecases/LoginUser';
-// import { LogoutUser } from '../../domain/usecases/LogoutUser';
-// import { GetProfile } from '../../domain/usecases/GetProfile';
 import { LocalStorageAuthRepository } from '../../infrastructure/repositories/LocalStorageAuthRepository';
 
 export class AuthService { // Removed "implements LoginUser, LogoutUser, GetProfile"

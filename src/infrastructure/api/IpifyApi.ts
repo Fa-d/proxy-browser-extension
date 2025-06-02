@@ -10,7 +10,6 @@ export class IpifyApi {
       }
       const data = await response.json();
       if (data && data.ip) {
-        console.log('IpifyApi: IP fetched successfully', data.ip);
         return data.ip;
       } else {
         console.error('IpifyApi: IP data is not in expected format', data);

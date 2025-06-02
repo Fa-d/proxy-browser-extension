@@ -20,11 +20,9 @@ export class ChromeSpeedRepository implements SpeedRepository {
   private latestSpeedInfo: SpeedInfo | null = null;
 
   constructor() {
-    // console.log("ChromeSpeedRepository instantiated");
   }
 
   startMonitoring(tabId: number): void {
-    // console.log(`ChromeSpeedRepository: Start monitoring tab ${tabId}`);
     if (this.pollingIntervalId) {
       this.stopMonitoring(); // Stop previous monitoring if any
     }
@@ -38,7 +36,6 @@ export class ChromeSpeedRepository implements SpeedRepository {
   }
 
   stopMonitoring(): void {
-    // console.log("ChromeSpeedRepository: Stop monitoring");
     if (this.pollingIntervalId) {
       clearInterval(this.pollingIntervalId);
       this.pollingIntervalId = null;
@@ -67,7 +64,6 @@ export class ChromeSpeedRepository implements SpeedRepository {
       );
 
       const currentData = result[key];
-      // console.log(`ChromeSpeedRepository: Polled data for tab ${this.currentTabId}`, currentData);
 
       if (currentData) {
         let downloadSpeed = 0;
@@ -104,7 +100,6 @@ export class ChromeSpeedRepository implements SpeedRepository {
         uploadSpeed = Math.max(0, uploadSpeed);
 
         this.latestSpeedInfo = this.formatSpeedInfo(downloadSpeed, uploadSpeed);
-        // console.log(`ChromeSpeedRepository: Calculated speed for tab ${this.currentTabId}`, this.latestSpeedInfo);
 
       } else {
         // No data for this tab yet, or it was cleared. Reset speeds.

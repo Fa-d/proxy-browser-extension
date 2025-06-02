@@ -8,13 +8,11 @@ const proxyService = new ProxyService();
 export const useProxy = () => {
   const [connectionDetails, setConnectionDetails] = useState<ConnectionDetails | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false); // For connect/disconnect actions
-  const [isPolling, setIsPolling] = useState<boolean>(false); // For background polling of status/IP
   const [error, setError] = useState<string | null>(null);
 
   const fetchConnectionDetails = useCallback(async () => {
     // This can be called frequently, so don't set main isLoading for it
     // unless it's a specific user-initiated refresh.
-    // setIsPolling(true); // Indicate background activity
     setError(null);
     try {
       const details = await proxyService.getConnectionDetails();
@@ -22,9 +20,7 @@ export const useProxy = () => {
     } catch (err: any) {
       console.error("useProxy - fetchConnectionDetails error:", err);
       // Don't necessarily set a visible error for failed polls, could be transient
-      // setError(err.message || 'Failed to fetch connection details');
     } finally {
-      // setIsPolling(false);
     }
   }, []);
 
@@ -81,7 +77,6 @@ export const useProxy = () => {
   return {
     connectionDetails,
     isConnecting: isLoading, // Renamed for clarity
-    isPollingConnectionDetails: isPolling,
     proxyError: error,
     connectProxy: connect,
     disconnectProxy: disconnect,

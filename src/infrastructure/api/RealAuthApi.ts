@@ -1,4 +1,4 @@
-import { AuthCredentials, AuthRepository } from '../../domain/repositories/AuthRepository';
+import { AuthCredentials } from '../../domain/repositories/AuthRepository';
 import { User } from '../../domain/models/User';
 
 // Define interfaces for the actual API request and response structure
@@ -69,7 +69,7 @@ export interface RealAuthApiResponse {
   // Add any other important fields that AuthService might need
 }
 
-export class RealAuthApi { // Implementing Partial as it focuses on login
+export class RealAuthApi {
   private readonly apiUrl = 'https://api.iplockvpn.com/app-api-v1/extension-login';
 
   // Hardcoded UDID and device_type as per issue description
@@ -119,7 +119,6 @@ export class RealAuthApi { // Implementing Partial as it focuses on login
           validityDate: successData.validity_date,
           userType: successData.user_type,
           fullName: successData.fullname,
-          // map other fields as necessary
         };
       } else {
         const errorData = responseData as ApiLoginErrorResponse;

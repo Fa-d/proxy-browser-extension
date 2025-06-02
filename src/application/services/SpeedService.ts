@@ -12,17 +12,14 @@ export class SpeedService implements GetSpeedInfoUseCase {
   }
 
   async getCurrentSpeed(): Promise<SpeedInfo | null> {
-    // console.log("SpeedService: getCurrentSpeed called");
     return this.speedRepository.getCurrentSpeedInfo();
   }
 
   startMonitoringForTab(tabId: number): void {
-    // console.log(`SpeedService: startMonitoringForTab called for tab ${tabId}`);
     this.speedRepository.startMonitoring(tabId);
   }
 
   stopMonitoringForAllTabs(): void {
-    // console.log("SpeedService: stopMonitoringForAllTabs called");
     this.speedRepository.stopMonitoring();
   }
 }

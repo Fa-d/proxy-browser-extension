@@ -12,10 +12,10 @@ import {
   Toolbar,
   Typography,
   Divider,
-  Tooltip,
+  // Tooltip, // Removed as Refresh button is commented out
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import RefreshIcon from '@mui/icons-material/Refresh';
+// import RefreshIcon from '@mui/icons-material/Refresh'; // Removed as Refresh button is commented out
 
 import { useServers } from '../hooks/useServers';
 import { navigateTo } from '../../infrastructure/navigation/RouterService';
@@ -37,8 +37,8 @@ export const ServerListPage: React.FC = () => {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
-        bgcolor: 'background.default',
+        height: '100%', // Changed from minHeight: '100vh'
+        // bgcolor: 'background.default', // Removed, assuming BottomNavLayout or App.tsx handles it
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -91,19 +91,6 @@ export const ServerListPage: React.FC = () => {
           >
             Server List
           </Typography>
-          {/* <Tooltip title="Refresh">
-            <span>
-              <IconButton
-                color="inherit"
-                onClick={refetchServers}
-                disabled={isLoadingServers}
-                size="small"
-                sx={{ ml: 1 }}
-              >
-                <RefreshIcon />
-              </IconButton>
-            </span>
-          </Tooltip> */}
         </Toolbar>
         <Divider />
         <Box sx={{ px: 3, py: 2, flex: 1, minHeight: 350, maxHeight: 500, overflowY: 'auto' }}>
