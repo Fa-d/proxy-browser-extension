@@ -69,7 +69,7 @@ export interface RealAuthApiResponse {
   // Add any other important fields that AuthService might need
 }
 
-export class RealAuthApi implements Partial<AuthRepository> { // Implementing Partial as it focuses on login
+export class RealAuthApi { // Implementing Partial as it focuses on login
   private readonly apiUrl = 'https://api.iplockvpn.com/app-api-v1/extension-login';
 
   // Hardcoded UDID and device_type as per issue description
