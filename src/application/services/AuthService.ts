@@ -1,33 +1,33 @@
 import { User } from '../../domain/models/User';
-import { AuthCredentials, AuthRepository } from '../../domain/repositories/AuthRepository';
-// No longer "implements LoginUser, LogoutUser, GetProfile" to avoid 'execute' signature issues
-// The hooks will call the specific methods like login, logout, getProfile.
-// import { LoginUser } from '../../domain/usecases/LoginUser';
-// import { LogoutUser } from '../../domain/usecases/LogoutUser';
-// import { GetProfile } from '../../domain/usecases/GetProfile';
+import { AuthCredentials, AuthRepository, UserDetails } from '../../domain/repositories/AuthRepository';
 import { LocalStorageAuthRepository } from '../../infrastructure/repositories/LocalStorageAuthRepository';
 
-export class AuthService { // Removed "implements LoginUser, LogoutUser, GetProfile"
+export class AuthService {
   private authRepository: AuthRepository;
 
   constructor() {
     this.authRepository = new LocalStorageAuthRepository();
   }
 
-  async login(credentials: AuthCredentials): Promise<User | null> { // Renamed from executeLogin for clarity
-    console.log('AuthService: login called');
+  async login(credentials: AuthCredentials): Promise<User | null> {
     return this.authRepository.login(credentials);
   }
 
-  async logout(): Promise<void> { // Renamed from executeLogout
-    console.log('AuthService: logout called');
+  async logout(): Promise<void> {
     return this.authRepository.logout();
   }
 
-  async getProfile(): Promise<User | null> { // Renamed from executeGetProfile
-    console.log('AuthService: getProfile called');
+  async getProfile(): Promise<User | null> {
     return this.authRepository.getCurrentUser();
   }
 
-  // Removed the problematic generic 'execute' method
+  async getUserDetails(): Promise<UserDetails | null> {
+    if (typeof this.authRepository.getUserDetails === 'function') {
+      return this.authRepository.getUserDetails();
+    }
+    // This warning is useful if a different repository is ever injected
+    // that doesn't fully implement the extended AuthRepository interface.
+    console.warn('AuthService: authRepository does not appear to implement getUserDetails.');
+    return null;
+  }
 }

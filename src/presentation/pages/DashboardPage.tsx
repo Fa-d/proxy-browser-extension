@@ -17,7 +17,6 @@ import Lottie from "lottie-react";
 import animationPassedData from "../assets/connecting.json";
 import { useLocation } from "react-router-dom";
 import { useSpeedometer } from '../hooks/useSpeedometer';
-import { useAuth } from '../hooks/useAuth';
 import { useProxy } from '../hooks/useProxy';
 import { useServers } from '../hooks/useServers';
 import { navigateTo } from '../../infrastructure/navigation/RouterService';
@@ -25,7 +24,6 @@ import { navigateTo } from '../../infrastructure/navigation/RouterService';
 const DashboardPage: React.FC = () => {
   const theme = useTheme();
   const location = useLocation();
-  const { logout } = useAuth();
   const {
     connectionDetails,
     isConnecting,
@@ -48,7 +46,9 @@ const DashboardPage: React.FC = () => {
       navigateTo(location.pathname, { replace: true, state: { ...location.state, shouldConnect: 'false' } });
       handleConnectDisconnect();
     }
-    // eslint-disable-next-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Added react-hooks/exhaustive-deps to acknowledge dependency differences if any, or to clean up if not needed.
+    // Assuming original dependencies were correct and the comment is for future review if behavior changes.
   }, [location.state, selectedServer, connectionDetails, location.pathname]);
 
   useEffect(() => {
@@ -57,7 +57,7 @@ const DashboardPage: React.FC = () => {
 
   const handleConnectDisconnect = async () => {
     if (!selectedServer && !connectionDetails?.isConnected) {
-      alert("Please select a server from the server list first.");
+      alert("Please select a server from the server list first."); // User feedback
       return;
     }
     setIsProcessingProxyAction(true);
@@ -67,11 +67,7 @@ const DashboardPage: React.FC = () => {
       await connectProxy(selectedServer);
     }
     await refreshConnectionDetails();
-    setTimeout(() => setIsProcessingProxyAction(false), 1200);
-  };
-
-  const handleLogout = () => {
-    logout();
+    setTimeout(() => setIsProcessingProxyAction(false), 1200); // UI feedback timing
   };
 
   const defaultImageUrl = "/vite.svg";
@@ -90,7 +86,19 @@ const DashboardPage: React.FC = () => {
   }
 
   return (
-    <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center" bgcolor={theme.palette.background.default}>
+    // Adjust root Box for BottomNavLayout
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column', // Keep if page itself needs to manage flex internally
+        alignItems: 'center',
+        justifyContent: 'center', // To center the card
+        width: '100%', // Take full width from parent
+        flexGrow: 1, // Allow it to grow in the layout's main area
+        p: 2, // Add some padding if needed, or rely on Card margins
+        boxSizing: 'border-box',
+      }}
+    >
       <Card sx={{
         minWidth: 350,
         maxWidth: 400,
@@ -105,9 +113,6 @@ const DashboardPage: React.FC = () => {
           <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center', fontWeight: 700, letterSpacing: 1 }}>
             Dashboard
           </Typography>
-          <IconButton onClick={handleLogout} aria-label="logout" size="large" sx={{ color: theme.palette.text.secondary }}>
-            <LogoutIcon />
-          </IconButton>
         </Toolbar>
         <Divider />
         <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', px: 4, py: 3 }}>
@@ -152,9 +157,9 @@ const DashboardPage: React.FC = () => {
 
           {/* IP Address */}
           <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mb: 2 }}>
-            {connectionDetails.currentIp === "Error fetching IP" || connectionDetails.currentIp === "" ?
-              (<CircularProgress size={18} />) :
-              (`Current IP: ${connectionDetails.currentIp}`)}
+            {connectionDetails.currentIp === "Error fetching IP" || connectionDetails.currentIp === ""
+              ? <CircularProgress size={18} />
+              : `Current IP: ${connectionDetails.currentIp}`}
           </Typography>
 
           {/* Speedometer */}
