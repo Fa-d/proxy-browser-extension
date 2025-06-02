@@ -6,6 +6,7 @@ import DashboardPage from './presentation/pages/DashboardPage';
 import ServerListPage from './presentation/pages/ServerListPage';
 import ProfilePage from './presentation/pages/ProfilePage'; // Added
 import BottomNavLayout from './presentation/components/BottomNavLayout'; // Added
+
 import { Box, CircularProgress } from '@mui/material';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { setNavigate } from './infrastructure/navigation/RouterService';
@@ -64,8 +65,7 @@ const AppContent: React.FC = () => {
           This ensures that if a user somehow lands on e.g. /unknown while logged in,
           they are redirected to a safe default like /dashboard.
         */}
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
-      </Routes>
+
     );
   } else {
     // User is not logged in, show public routes
