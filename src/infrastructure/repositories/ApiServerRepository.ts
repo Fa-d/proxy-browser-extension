@@ -6,40 +6,34 @@ const IP_BUNDLE_STORAGE_KEY = 'ipBundle'; // Must match key used in LocalStorage
 const SELECTED_SERVER_STORAGE_KEY = 'selectedServer';
 
 export class ApiServerRepository implements ServerRepository {
-
-  constructor() {
-    // Check if IpBundleItem is available, if not, define a local version.
-    // This is just a type check for development, actual import should work.
-    // type LocalIpBundleItem = { ip: string; country_name: string; ip_id: number; };
-    // const temp: LocalIpBundleItem | undefined = undefined;
-  }
+  // constructor() {} // Constructor not needed if it's empty
 
   async getServers(): Promise<Server[]> {
     const ipBundleJson = localStorage.getItem(IP_BUNDLE_STORAGE_KEY);
     if (!ipBundleJson) {
-      console.log('ApiServerRepository: No IP bundle found in localStorage.');
-      return []; // No bundle means no servers
+      // This is a normal scenario if the user hasn't logged in or bundle is not set
+      // console.log('ApiServerRepository: No IP bundle found in localStorage.');
+      return [];
     }
 
     try {
       const ipBundle = JSON.parse(ipBundleJson) as IpBundleItem[];
       if (!Array.isArray(ipBundle)) {
-        console.error('ApiServerRepository: Parsed IP bundle is not an array.');
-        localStorage.removeItem(IP_BUNDLE_STORAGE_KEY); // Clear corrupted data
+        console.error('ApiServerRepository: Parsed IP bundle is not an array. Clearing corrupted data.');
+        localStorage.removeItem(IP_BUNDLE_STORAGE_KEY);
         return [];
       }
 
       const servers: Server[] = ipBundle.map(item => ({
         id: item.ip_id.toString(),
-        url: item.ip, // e.g., "64.225.65.239:51820"
+        url: item.ip,
         country: item.country_name,
-        city: '', // City is not available in IpBundleItem, defaulting to empty
+        city: '', // City is not available in IpBundleItem
       }));
-      // console.log('ApiServerRepository: Fetched servers', servers);
       return servers;
     } catch (error) {
-      console.error('ApiServerRepository: Error parsing IP bundle from localStorage', error);
-      localStorage.removeItem(IP_BUNDLE_STORAGE_KEY); // Clear corrupted data
+      console.error('ApiServerRepository: Error parsing IP bundle from localStorage. Clearing corrupted data.', error);
+      localStorage.removeItem(IP_BUNDLE_STORAGE_KEY);
       return [];
     }
   }
@@ -48,26 +42,22 @@ export class ApiServerRepository implements ServerRepository {
     const serverJson = localStorage.getItem(SELECTED_SERVER_STORAGE_KEY);
     if (serverJson) {
       try {
-        const server: Server = JSON.parse(serverJson);
-        // console.log('ApiServerRepository: Fetched selected server', server);
-        return server;
+        return JSON.parse(serverJson) as Server;
       } catch (error) {
-        console.error('ApiServerRepository: Error parsing selected server from localStorage', error);
-        localStorage.removeItem(SELECTED_SERVER_STORAGE_KEY); // Clear corrupted data
+        console.error('ApiServerRepository: Error parsing selected server from localStorage. Clearing corrupted data.', error);
+        localStorage.removeItem(SELECTED_SERVER_STORAGE_KEY);
         return null;
       }
     }
-    // console.log('ApiServerRepository: No selected server found in localStorage.');
     return null;
   }
 
   async selectServer(server: Server): Promise<void> {
     if (server) {
       localStorage.setItem(SELECTED_SERVER_STORAGE_KEY, JSON.stringify(server));
-      // console.log('ApiServerRepository: Server selected and stored', server);
     } else {
-      // console.warn('ApiServerRepository: Attempted to select a null server.');
-      localStorage.removeItem(SELECTED_SERVER_STORAGE_KEY); // Clear if null is passed
+      // If a null/undefined server is passed, clear the selected server
+      localStorage.removeItem(SELECTED_SERVER_STORAGE_KEY);
     }
   }
 }

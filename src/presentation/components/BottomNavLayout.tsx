@@ -16,25 +16,25 @@ const BottomNavLayout: React.FC<BottomNavLayoutProps> = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Determine the current value for BottomNavigation based on the path
-  // The value should correspond to the path for navigation
-  const getCurrentPathValue = () => {
+  // Determines the active navigation tab based on the current URL pathname.
+  const getCurrentPathValue = React.useCallback(() => {
     const pathname = location.pathname;
     if (pathname.startsWith('/profile')) return '/profile';
     if (pathname.startsWith('/serverList')) return '/serverList';
-    if (pathname.startsWith('/dashboard')) return '/dashboard';
-    return '/dashboard'; // Default to dashboard/home
-  };
+    // Default to '/dashboard' for any other paths or the root.
+    return '/dashboard';
+  }, [location.pathname]);
 
   const [value, setValue] = React.useState(getCurrentPathValue());
 
   React.useEffect(() => {
     setValue(getCurrentPathValue());
-  }, [location.pathname]);
+  }, [getCurrentPathValue]); // Dependency array updated to use the memoized function
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-    setValue(newValue);
-    navigate(newValue); // newValue is the path
+    // No need to setValue here as the useEffect above will handle it when location.pathname changes.
+    // setValue(newValue); // This would make the tab change instantly, but effect handles it via path change.
+    navigate(newValue);
   };
 
   return (
@@ -43,20 +43,20 @@ const BottomNavLayout: React.FC<BottomNavLayoutProps> = ({ children }) => {
         component="main"
         sx={{
           flexGrow: 1,
-          overflowY: 'auto', // Allow content to scroll
-          // The actual page content will have its own padding/margins
+          overflowY: 'auto',
+          // Page-specific padding should be handled by the child pages themselves
         }}
       >
-        {children} {/* Page content will be rendered here */}
+        {children}
       </Box>
       <Paper
         sx={{
-          position: 'sticky', // Make it sticky at the bottom
+          position: 'sticky',
           bottom: 0,
           left: 0,
           right: 0,
-          zIndex: 1100, // Ensure it's above other content
-          borderTop: '1px solid rgba(0, 0, 0, 0.12)' // Optional: add a top border
+          zIndex: (theme) => theme.zIndex.appBar + 1, // Ensure it's above typical app bars if any
+          borderTop: (theme) => `1px solid ${theme.palette.divider}`
         }}
         elevation={3}
       >

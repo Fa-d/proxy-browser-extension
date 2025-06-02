@@ -9,25 +9,28 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle'; // Standard M
 const ProfilePage: React.FC = () => {
   const { currentUser, userDetails, logout, isLoading } = useAuth();
 
-  if (isLoading || (!currentUser && !userDetails)) { // Show loader if auth state is still loading
+  // Combined loading check for initial data fetch
+  if (isLoading || (!currentUser && !userDetails && !isLoading)) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'calc(100vh - 56px)', p: 3 }}> {/* Adjust height for potential bottomNav */}
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'calc(100vh - 112px)', p: 3 }}>
+        {/* 112px approx for top bar (if any) + bottom nav */}
         <CircularProgress />
       </Box>
     );
   }
 
-  if (!currentUser) { // Should ideally not happen if routes are protected, but good fallback
+  // This state should ideally be prevented by the router redirecting to /login
+  // if currentUser is null after isLoading is false.
+  if (!currentUser) {
     return (
       <Box sx={{ p: 3, textAlign: 'center' }}>
-        <Typography variant="h6">Not logged in</Typography>
-        <Typography>Please log in to view your profile.</Typography>
-        {/* Optionally, add a button to navigate to login, though Router should handle this */}
+        <Typography variant="h6">User not found</Typography>
+        <Typography>Please try logging in again.</Typography>
       </Box>
     );
   }
 
-  // Fallback for fullName if userDetails is somehow null but currentUser exists
+  // Provide fallbacks for display if userDetails is not fully populated but currentUser exists
   const displayName = userDetails?.fullName || currentUser.email;
   const displayPackage = userDetails?.packageName || 'N/A';
   const displayValidity = userDetails?.validityDate || 'N/A';
@@ -37,23 +40,23 @@ const ProfilePage: React.FC = () => {
       sx={{
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'flex-start', // Align items to the top
-        p: 2, // Padding around the card
-        pt: 4, // More padding at the top
-        minHeight: 'calc(100vh - 56px - 56px)', // Viewport height - top_bar_approx - bottom_nav_approx
+        alignItems: 'flex-start',
+        p: { xs: 1, sm: 2 }, // Responsive padding
+        pt: { xs: 2, sm: 4 },
+        minHeight: '100%', // Let BottomNavLayout handle overall height
         boxSizing: 'border-box',
       }}
     >
       <Card
         sx={{
-          minWidth: 320,
-          maxWidth: 450,
+          minWidth: 300,
+          maxWidth: 480,
           width: '100%',
-          borderRadius: 3,
-          boxShadow: 6,
+          borderRadius: { xs: 2, sm: 3 }, // Responsive border radius
+          boxShadow: { xs: 3, sm: 6 },
         }}
       >
-        <CardContent sx={{ p: 3, textAlign: 'center' }}>
+        <CardContent sx={{ p: { xs: 2, sm: 3 }, textAlign: 'center' }}>
           <Avatar sx={{ width: 80, height: 80, margin: '0 auto 16px', bgcolor: 'primary.main' }}>
             <AccountCircleIcon sx={{ fontSize: 60 }} />
           </Avatar>
@@ -61,7 +64,7 @@ const ProfilePage: React.FC = () => {
             {displayName}
           </Typography>
           <Divider sx={{ my: 2 }} />
-          <Box sx={{ textAlign: 'left', my: 2 }}>
+          <Box sx={{ textAlign: 'left', my: 2, px: { xs: 1, sm: 0 } }}> {/* Inner padding for text on small screens */}
             <Typography variant="subtitle1" gutterBottom>
               <strong>Email:</strong> {currentUser.email}
             </Typography>
@@ -74,12 +77,11 @@ const ProfilePage: React.FC = () => {
             <Typography variant="subtitle1" gutterBottom>
               <strong>Expires on:</strong> {displayValidity}
             </Typography>
-            {/* Add more details from userDetails if needed */}
           </Box>
           <Divider sx={{ my: 2 }} />
           <Button
             variant="contained"
-            color="primary" // Or "error" for logout
+            color="primary"
             startIcon={<LogoutIcon />}
             onClick={logout}
             fullWidth

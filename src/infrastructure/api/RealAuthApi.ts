@@ -85,12 +85,14 @@ export class RealAuthApi { // Implementing Partial as it focuses on login
     };
 
     if (!credentials.password) {
-      // console.warn('RealAuthApi: Password is required for login.');
-      // Or throw an error, or return null based on how AuthRepository expects this.
-      // For now, let's proceed and let the API handle missing password if it can.
-      // The issue description implies password is part of the request.
-      // throw new Error('Password is required for login.');
-      return null; // Or align with how DummyAuthApi handles missing pass
+      // API requires a password. If not provided, login will fail.
+      // Returning null or throwing an error here is an option,
+      // but current design expects RealAuthApi to attempt the call.
+      // The API itself will respond with an error for missing/invalid pass.
+      // For consistency with how other errors are handled (throwing),
+      // one might argue to throw an error here too.
+      // However, the original spec returned null for this specific case.
+      return null;
     }
 
     try {
@@ -121,30 +123,13 @@ export class RealAuthApi { // Implementing Partial as it focuses on login
         };
       } else {
         const errorData = responseData as ApiLoginErrorResponse;
-        console.error('RealAuthApi: Login failed:', errorData.message, responseData);
-        // Depending on how errors should be propagated to UI,
-        // you might throw a custom error here or return null.
-        // Returning null for now to match User | null, but the calling repo needs to handle this.
-        throw new Error(errorData.message || 'Login failed');
+        console.error('RealAuthApi: Login API request failed:', errorData.message, responseData);
+        throw new Error(errorData.message || 'Login failed due to API error');
       }
     } catch (error) {
-      console.error('RealAuthApi: Network or other error during login:', error);
-      // Propagate the error or a generic one
-      // throw error; // Rethrow the caught error
-      throw new Error(error instanceof Error ? error.message : 'An unknown network error occurred');
+      // Log network errors or other issues during the fetch operation
+      console.error('RealAuthApi: Network or fetch error during login:', error);
+      throw new Error(error instanceof Error ? error.message : 'A network error occurred during login');
     }
   }
-
-  // logout and getCurrentUser are typically not handled by a pure API interaction class like this.
-  // They would be managed by a repository that uses localStorage (e.g., LocalStorageAuthRepository).
-  // Thus, we either don't implement them here or make them throw Not Implemented.
-  // For Partial<AuthRepository>, this is fine.
-
-  // async logout(): Promise<void> {
-  //   throw new Error('Logout not implemented in RealAuthApi. Should be handled by LocalStorageAuthRepository.');
-  // }
-
-  // async getCurrentUser(): Promise<User | null> {
-  //   throw new Error('getCurrentUser not implemented in RealAuthApi. Should be handled by LocalStorageAuthRepository.');
-  // }
 }

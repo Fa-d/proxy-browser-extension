@@ -19,16 +19,16 @@ export const useAuth = () => {
     try {
       const user = await authService.getProfile();
       setCurrentUser(user);
-      if (user) { // Only fetch details if user exists
+      if (user) {
         const details = await authService.getUserDetails();
         setUserDetails(details);
       } else {
-        setUserDetails(null); // Clear details if no user
+        setUserDetails(null);
       }
     } catch (error: any) {
-      console.error("useAuth - checkUserSession error:", error);
-      setAuthError(error.message || 'Failed to check session');
-      setCurrentUser(null); // Ensure user is null on error
+      console.error("useAuth: Error during checkUserSession", error);
+      setAuthError(error.message || 'Failed to check user session.');
+      setCurrentUser(null);
       setUserDetails(null);
     } finally {
       setIsLoading(false);
@@ -42,21 +42,18 @@ export const useAuth = () => {
   const login = useCallback(async (credentials: AuthCredentials) => {
     setIsLoading(true);
     setAuthError(null);
-    setUserDetails(null); // Clear previous details on new login attempt
+    setUserDetails(null);
     try {
       const user = await authService.login(credentials);
       setCurrentUser(user);
       if (user) {
-        const details = await authService.getUserDetails(); // Fetch details after user is confirmed
+        const details = await authService.getUserDetails();
         setUserDetails(details);
-        navigateTo('/dashboard'); // Navigate on successful login
-      } else {
-        // This branch might not be hit if authService.login throws on failure (which it does)
-        // setAuthError('Login failed. Please check your credentials.'); // Handled by catch
-        setUserDetails(null);
       }
+      // Removed 'else' block: if 'user' is null, authService.login would have thrown,
+      // and execution would be in the catch block.
     } catch (error: any) {
-      console.error("useAuth - login error:", error);
+      console.error("useAuth: Error during login", error);
       setAuthError(error.message || 'An unexpected error occurred during login.');
       setCurrentUser(null);
       setUserDetails(null);
@@ -66,28 +63,29 @@ export const useAuth = () => {
   }, []);
 
   const logout = useCallback(async () => {
-    setIsLoading(true);
     setAuthError(null);
     try {
       await authService.logout();
       setCurrentUser(null);
       setUserDetails(null);
-      navigateTo('/'); // Navigate to login page on logout
     } catch (error: any) {
-      console.error("useAuth - logout error:", error);
+      console.error("useAuth: Error during logout", error);
       setAuthError(error.message || 'Logout failed.');
-    } finally {
-      setIsLoading(false);
+      // Ensure states are cleared even if authService.logout() had an issue
+      setCurrentUser(null);
+      setUserDetails(null);
     }
+    // isLoading is not managed here as logout is primarily a state clearing action.
+    // App.tsx will react to currentUser being null.
   }, []);
 
   return {
     currentUser,
     isLoading,
     authError,
-    userDetails, // Add this
+    userDetails,
     login,
     logout,
-    checkUserSession // Expose if manual refresh is needed
+    checkUserSession
   };
 };

@@ -34,37 +34,32 @@ export class LocalStorageAuthRepository implements AuthRepository {
       if (apiResponse) {
         const { user, ipBundle, ...restDetails } = apiResponse;
 
-        // Store the main user object (id, email)
         localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
-
-        // Store IP Bundle
         localStorage.setItem(IP_BUNDLE_STORAGE_KEY, JSON.stringify(ipBundle));
 
-        // Store other user details
-        const userDetails: UserDetails = {
+        const userDetailsData: UserDetails = {
           packageName: restDetails.packageName,
           validityDate: restDetails.validityDate,
           userType: restDetails.userType,
           fullName: restDetails.fullName,
         };
-        localStorage.setItem(USER_DETAILS_STORAGE_KEY, JSON.stringify(userDetails));
+        localStorage.setItem(USER_DETAILS_STORAGE_KEY, JSON.stringify(userDetailsData));
 
-        return user; // Return only the User object as per AuthRepository interface
+        return user;
       }
-      // If apiResponse is null (e.g. password not provided in RealAuthApi)
-      // or if RealAuthApi.login itself returned null before throwing an error
-      this.clearAllAuthData(); // Ensure a clean state if login didn't fully complete
+      // This case handles where RealAuthApi.login might return null (e.g., no password)
+      // before an error is thrown.
+      this.clearAllAuthData();
       return null;
     } catch (error) {
-      console.error('LocalStorageAuthRepository: Login failed', error);
-      this.clearAllAuthData(); // Clear any partial data on error
-      throw error; // Re-throw the error to be handled by AuthService/useAuth
+      console.error('LocalStorageAuthRepository: Login process failed', error);
+      this.clearAllAuthData();
+      throw error;
     }
   }
 
   async logout(): Promise<void> {
     this.clearAllAuthData();
-    // console.log('LocalStorageAuthRepository: User data cleared from localStorage.');
   }
 
   async getCurrentUser(): Promise<User | null> {
@@ -73,8 +68,8 @@ export class LocalStorageAuthRepository implements AuthRepository {
       try {
         return JSON.parse(userJson) as User;
       } catch (error) {
-        console.error('LocalStorageAuthRepository: Error parsing user data from localStorage', error);
-        this.clearAllAuthData(); // Clear all auth data if core user data is corrupt
+        console.error('LocalStorageAuthRepository: Error parsing core user data from localStorage', error);
+        this.clearAllAuthData();
         return null;
       }
     }
