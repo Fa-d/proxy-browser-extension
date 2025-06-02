@@ -1,104 +1,183 @@
-import React from 'react'; // Added React import
+import React from 'react';
 import { Avatar, Sheet } from '@mui/joy';
-import { Card, IconButton, List, ListItem, ListItemAvatar, ListItemText, CircularProgress, Box } from '@mui/material'; // Added CircularProgress, Box
-// useNavigate is replaced by navigateTo
-// import { useNavigate } from "react-router-dom";
-import Toolbar from '@mui/material/Toolbar';
+import {
+  Card,
+  IconButton,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  CircularProgress,
+  Box,
+  Toolbar,
+  Typography,
+  Divider,
+  Tooltip,
+} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import Typography from '@mui/material/Typography';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
-import { useServers } from '../hooks/useServers'; // Import the hook
-import { navigateTo } from '../../infrastructure/navigation/RouterService'; // Import for navigation
-import { Server } from '../../domain/models/Server'; // Import Server type
+import { useServers } from '../hooks/useServers';
+import { navigateTo } from '../../infrastructure/navigation/RouterService';
+import { Server } from '../../domain/models/Server';
 
-// Removed hardcoded produvtList, will come from useServers hook
-
-export const ServerListPage: React.FC = () => { // Changed to React.FC
-  // const navigate = useNavigate(); // Replaced
+export const ServerListPage: React.FC = () => {
   const {
     servers,
     isLoadingServers,
     selectServer,
-    serverError
+    serverError,
   } = useServers();
 
   const handleServerSelect = async (server: Server) => {
     await selectServer(server);
-    // Navigate back to dashboard, and pass state to trigger connection
-    navigateTo("/dashboard", { state: { shouldConnect: 'true' } });
+    navigateTo('/dashboard', { state: { shouldConnect: 'true' } });
   };
 
   return (
-    <main>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        bgcolor: 'background.default',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
       <Sheet
         sx={{
-          width: 300,
+          width: 370,
           mx: 'auto',
-          my: 4,
-          py: 3,
-          px: 2,
+          py: 0,
+          px: 0,
+          borderRadius: 3,
+          boxShadow: 'lg',
+          bgcolor: 'background.paper',
           display: 'flex',
-          minHeight: 300, // Keep minHeight
-          maxHeight: 500, // Keep maxHeight
           flexDirection: 'column',
-          gap: 2,
-          borderRadius: 'sm',
-          boxShadow: 'md',
-          overflowY: 'auto' // Added for scrollability if list is long
         }}
         variant="outlined"
       >
-        <Toolbar>
-          <IconButton edge="start" color="inherit" onClick={() => {
-            navigateTo("/dashboard"); // Navigate back to dashboard
-          }} aria-label="back">
+        <Toolbar
+          sx={{
+            px: 2,
+            py: 1,
+            minHeight: 56,
+            bgcolor: 'primary.main',
+            color: 'primary.contrastText',
+            borderTopLeftRadius: 12,
+            borderTopRightRadius: 12,
+            boxShadow: 1,
+          }}
+        >
+          <IconButton
+            edge="start"
+            color="inherit"
+            onClick={() => navigateTo('/dashboard')}
+            aria-label="back"
+            sx={{ mr: 1 }}
+          >
             <ArrowBackIcon />
           </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign: 'center' }}>
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{
+              flexGrow: 1,
+              textAlign: 'center',
+              fontWeight: 600,
+              letterSpacing: 1,
+            }}
+          >
             Server List
           </Typography>
-          {/* Added a placeholder for potential right-side action like a refresh button */}
-          <Box sx={{ width: 40 }} />
-        </Toolbar>
-
-        {isLoadingServers ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-            <CircularProgress />
-          </Box>
-        ) : serverError ? (
-          <Typography color="error" sx={{ textAlign: 'center', mt: 2 }}>
-            Error: {serverError}
-          </Typography>
-        ) : servers.length === 0 ? (
-          <Typography sx={{ textAlign: 'center', mt: 2 }}>
-            No servers available.
-          </Typography>
-        ) : (
-          <List sx={{ overflowY: 'auto', flexGrow: 1 }}> {/* Ensure list itself can scroll if content overflows Sheet */}
-            {servers.map((server) => ( // Changed product to server
-              <Card
-                key={server.id} // Use server.id as key
-                sx={{ mt: 2, width: '100%', cursor: 'pointer' }}
-                onClick={() => handleServerSelect(server)}
+          {/* <Tooltip title="Refresh">
+            <span>
+              <IconButton
+                color="inherit"
+                onClick={refetchServers}
+                disabled={isLoadingServers}
+                size="small"
+                sx={{ ml: 1 }}
               >
-                <ListItem>
-                  <ListItemAvatar>
-                    {/* Placeholder Avatar, can be customized */}
-                    <Avatar sx={{ width: 50, height: 50 }} />
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={server.url}
-                    secondary={`${server.city}, ${server.country}`} // Combined city and country
-                  />
-                </ListItem>
-              </Card>
-            ))}
-          </List>
-        )}
+                <RefreshIcon />
+              </IconButton>
+            </span>
+          </Tooltip> */}
+        </Toolbar>
+        <Divider />
+        <Box sx={{ px: 3, py: 2, flex: 1, minHeight: 350, maxHeight: 500, overflowY: 'auto' }}>
+          {isLoadingServers ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}>
+              <CircularProgress color="primary" />
+            </Box>
+          ) : serverError ? (
+            <Typography color="error" sx={{ textAlign: 'center', mt: 4 }}>
+              Error: {serverError}
+            </Typography>
+          ) : servers.length === 0 ? (
+            <Typography sx={{ textAlign: 'center', mt: 4, color: 'text.secondary' }}>
+              No servers available.
+            </Typography>
+          ) : (
+            <List disablePadding>
+              {servers.map((server) => (
+                <Card
+                  key={server.id}
+                  variant="outlined"
+                  sx={{
+                    mb: 2,
+                    borderRadius: 2,
+                    boxShadow: 'sm',
+                    transition: 'box-shadow 0.2s, border-color 0.2s',
+                    cursor: 'pointer',
+                    '&:hover': {
+                      boxShadow: 'md',
+                      borderColor: 'primary.main',
+                    },
+                  }}
+                  onClick={() => handleServerSelect(server)}
+                >
+                  <ListItem
+                    sx={{
+                      py: 1.5,
+                      px: 2,
+                      alignItems: 'center',
+                    }}
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                        sx={{
+                          width: 48,
+                          height: 48,
+                          bgcolor: 'primary.light',
+                          color: 'primary.main',
+                          fontWeight: 700,
+                          fontSize: 22,
+                        }}
+                      >
+                        {server.country?.[0] || 'S'}
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={
+                        <Typography variant="subtitle1" fontWeight={600}>
+                          {server.city}, {server.country}
+                        </Typography>
+                      }
+                      secondary={
+                        <Typography variant="body2" color="text.secondary">
+                          {server.url}
+                        </Typography>
+                      }
+                    />
+                  </ListItem>
+                </Card>
+              ))}
+            </List>
+          )}
+        </Box>
       </Sheet>
-    </main>
+    </Box>
   );
 };
-
-// Removed export default as it's a named export 'ServerListPage'
-// If default is preferred, change export const ServerListPage ... to export default function ServerListPage ...

@@ -7,7 +7,7 @@ export class DummyAuthApi {
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    if (credentials.email === 'admin' && credentials.password === 'admin') {
+    if (credentials.email === 'admin@admin.com' && credentials.password === 'admin') {
       const user: User = {
         id: 'dummy-user-id-123',
         email: credentials.email,
