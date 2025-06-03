@@ -10,10 +10,11 @@ import Divider from '@mui/joy/Divider';
 import { Typography as MuiTypography } from '@mui/material';
 import { useAuth } from '../hooks/useAuth';
 import { AuthCredentials } from '../../domain/repositories/AuthRepository';
+import { navigateTo } from '../../infrastructure/navigation/RouterService';
 
 export default function LoginPage() {
-  const [inputUsername, setUsername] = React.useState('');
-  const [inputPassword, setPassword] = React.useState('');
+  const [inputUsername, setUsername] = React.useState('yakeki8173@f5url.com');
+  const [inputPassword, setPassword] = React.useState('123456');
   const { login, isLoading, authError } = useAuth();
 
   const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,8 +28,10 @@ export default function LoginPage() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const credentials: AuthCredentials = { email: inputUsername, password: inputPassword };
-    await login(credentials);
-  };
+    await login(credentials).then(() => {
+      navigateTo('/home', { replace: true });
+    });
+  }
 
   return (
     <CssVarsProvider>

@@ -49,8 +49,6 @@ export const useAuth = () => {
       if (user) {
         const details = await authService.getUserDetails();
         setUserDetails(details);
-        navigateTo('/dashboard', { replace: true });
-
       }
       // Removed 'else' block: if 'user' is null, authService.login would have thrown,
       // and execution would be in the catch block.
@@ -70,14 +68,14 @@ export const useAuth = () => {
       await authService.logout();
       setCurrentUser(null);
       setUserDetails(null);
-      navigateTo('/', { replace: true }); // Navigate after successful logout
+      navigateTo('/login', { replace: true }); // Navigate after successful logout
     } catch (error: any) {
       console.error("useAuth: Error during logout", error);
       setAuthError(error.message || 'Logout failed.');
       // Ensure states are cleared even if authService.logout() had an issue
       setCurrentUser(null);
       setUserDetails(null);
-      navigateTo('/', { replace: true }); // Navigate even if backend logout fails
+      navigateTo('/login', { replace: true }); // Navigate even if backend logout fails
     }
     // isLoading is not managed here as logout is primarily a state clearing action.
     // App.tsx will react to currentUser being null.

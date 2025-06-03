@@ -1,13 +1,20 @@
 {
     "manifest_version": 3,
-    "name": "Browser-VPN",
-    "version": "1.0",
-    "description": "",
+    "name": "Secure HTTPS Proxy Connector",
+    "version": "0.1.0",
+    "description": "Connects securely to your remote HTTPS proxy server.",
     "action": {
-        "default_popup": "index.html"
+        "default_popup": "index.html",
+        "default_title": "Proxy Settings",
+        "default_icon": {
+            "16": "thunder.png",
+            "32": "thunder.png",
+            "48": "thunder.png",
+            "128": "thunder.png"
+        }
     },
     "background": {
-        "service_worker": "proxy.js"
+        "service_worker": "background.js"
     },
     "permissions": [
         "scripting",
@@ -22,7 +29,9 @@
         "<all_urls>"
     ],
     "icons": {
-        "16": "vite.svg",
-        "32": "vite.svg"
+        "16": "thunder.png",
+        "32": "thunder.png",
+        "48": "thunder.png",
+        "128": "thunder.png"
     }
 }

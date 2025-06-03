@@ -46,9 +46,6 @@ const DashboardPage: React.FC = () => {
       navigateTo(location.pathname, { replace: true, state: { ...location.state, shouldConnect: 'false' } });
       handleConnectDisconnect();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    // Added react-hooks/exhaustive-deps to acknowledge dependency differences if any, or to clean up if not needed.
-    // Assuming original dependencies were correct and the comment is for future review if behavior changes.
   }, [location.state, selectedServer, connectionDetails, location.pathname]);
 
   useEffect(() => {
@@ -57,7 +54,7 @@ const DashboardPage: React.FC = () => {
 
   const handleConnectDisconnect = async () => {
     if (!selectedServer && !connectionDetails?.isConnected) {
-      alert("Please select a server from the server list first."); // User feedback
+      alert("Please select a server from the server list first."); 
       return;
     }
     setIsProcessingProxyAction(true);
@@ -67,10 +64,10 @@ const DashboardPage: React.FC = () => {
       await connectProxy(selectedServer);
     }
     await refreshConnectionDetails();
-    setTimeout(() => setIsProcessingProxyAction(false), 1200); // UI feedback timing
+    setTimeout(() => setIsProcessingProxyAction(false), 1200); 
   };
 
-  const defaultImageUrl = "/vite.svg";
+  const defaultImageUrl = "/thunder.svg";
   const displayServerName = selectedServer?.city || selectedServer?.country || "Select a server";
   const displayServerUrl = selectedServer?.url || "No server selected";
 
@@ -86,16 +83,15 @@ const DashboardPage: React.FC = () => {
   }
 
   return (
-    // Adjust root Box for BottomNavLayout
     <Box
       sx={{
         display: 'flex',
-        flexDirection: 'column', // Keep if page itself needs to manage flex internally
+        flexDirection: 'column', 
         alignItems: 'center',
-        justifyContent: 'center', // To center the card
-        width: '100%', // Take full width from parent
-        flexGrow: 1, // Allow it to grow in the layout's main area
-        p: 2, // Add some padding if needed, or rely on Card margins
+        justifyContent: 'center', 
+        width: '100%', 
+        flexGrow: 1,
+        p: 2, 
         boxSizing: 'border-box',
       }}
     >
@@ -111,7 +107,7 @@ const DashboardPage: React.FC = () => {
       }}>
         <Toolbar sx={{ px: 3, py: 2, bgcolor: theme.palette.background.paper }}>
           <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center', fontWeight: 700, letterSpacing: 1 }}>
-            Dashboard
+            Dashboard 1
           </Typography>
         </Toolbar>
         <Divider />
