@@ -177,8 +177,17 @@ const DashboardPage: React.FC = () => {
             }}
           >
             <Box sx={{ flex: 1, textAlign: 'center' }}>
-              <CloudDownloadRounded sx={{ color: theme.palette.primary.main, fontSize: 28 }} />
-              <Typography variant="caption" color="text.secondary">Download</Typography>
+              <Box sx={{
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+              }}>
+                <CloudDownloadRounded sx={{ color: theme.palette.primary.main, fontSize: 28, mr: 1 }} />
+                <Typography variant="caption" color="text.secondary">Download</Typography>
+              </Box>
               <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                 {isLoadingSpeed
                   ? <CircularProgress size={16} />
@@ -189,8 +198,17 @@ const DashboardPage: React.FC = () => {
             </Box>
             <Divider orientation="vertical" flexItem />
             <Box sx={{ flex: 1, textAlign: 'center' }}>
-              <CloudUploadOutlined sx={{ color: theme.palette.secondary.main, fontSize: 28 }} />
-              <Typography variant="caption" color="text.secondary">Upload</Typography>
+              <Box sx={{
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+              }}>
+                <CloudUploadOutlined sx={{ color: theme.palette.secondary.main, fontSize: 28, mr: 1 }} />
+                <Typography variant="caption" color="text.secondary">Upload</Typography>
+              </Box>
               <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                 {isLoadingSpeed
                   ? <CircularProgress size={16} />

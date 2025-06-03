@@ -5,7 +5,7 @@ import { IpRepository } from '../../domain/repositories/IpRepository';
 import { ChromeProxyRepository } from '../../infrastructure/repositories/ChromeProxyRepository';
 import { RemoteIpRepository } from '../../infrastructure/repositories/RemoteIpRepository';
 import { ServerRepository } from '../../domain/repositories/ServerRepository';
-import { HardcodedServerRepository } from '../../infrastructure/repositories/HardcodedServerRepository';
+import { ApiServerRepository } from '../../infrastructure/repositories/ApiServerRepository';
 
 export class ProxyService { // Removed "implements ConnectProxy, DisconnectProxy, GetConnectionDetails"
   private proxyRepository: ProxyRepository;
@@ -15,7 +15,7 @@ export class ProxyService { // Removed "implements ConnectProxy, DisconnectProxy
   constructor() {
     this.proxyRepository = new ChromeProxyRepository();
     this.ipRepository = new RemoteIpRepository();
-    this.serverRepository = new HardcodedServerRepository();
+    this.serverRepository = new ApiServerRepository();
   }
 
   async connect(server: Server): Promise<void> { // Renamed from executeConnect

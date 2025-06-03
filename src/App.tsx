@@ -3,7 +3,7 @@ import React from 'react';
 import { useAuth } from './presentation/hooks/useAuth';
 import LoginPage from './presentation/pages/LoginPage';
 import DashboardPage from './presentation/pages/DashboardPage';
-import {ServerListPage} from './presentation/pages/ServerListPage';
+import { ServerListPage } from './presentation/pages/ServerListPage';
 import ProfilePage from './presentation/pages/ProfilePage';
 import BottomNavLayout from './presentation/components/BottomNavLayout';
 import { Box, CircularProgress } from '@mui/material';
@@ -28,13 +28,13 @@ const AppContent: React.FC = () => {
   if (isLoading) {
     // Display a full-screen loading indicator while checking auth status.
     return (
-      <Box 
-        sx={{ 
-          display: 'flex', 
+      <Box
+        sx={{
+          display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          height: '100vh', 
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
           width: '100vw',
           bgcolor: 'background.default' // Use theme background color
         }}
@@ -44,44 +44,33 @@ const AppContent: React.FC = () => {
     );
   }
 
-  // User is authenticated, render protected routes with BottomNavLayout.
-  if (currentUser) {
-    return (
-      <Routes>
-        {/* Routes that use BottomNavLayout */}
-        <Route element={<BottomNavLayout><Outlet></Outlet></BottomNavLayout>}>
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/serverList" element={<ServerListPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          {/* Default route for logged-in users at root path: redirect to dashboard */}
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        </Route>
-        
-        {/* Fallback for any other authenticated paths not matching above: redirect to dashboard. */}
-        {/* This handles cases like direct navigation to an undefined authenticated route. */}
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
-      </Routes>
-    );
-  } 
-  
-  // User is not authenticated, render public routes.
-  else {
-    return (
-      <Routes>
-        <Route path="/" element={<LoginPage />} />
-        {/* Fallback for any other unauthenticated paths: redirect to login page. */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    );
-  }
+  return (
+    <Routes>
+      {!currentUser ? (
+        <>
+          <Route path="/" element={<LoginPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </>
+      ) : (
+        <>
+          <Route element={<BottomNavLayout><Outlet /></BottomNavLayout>}>
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/serverList" element={<ServerListPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/" element={<Navigate to="/" replace />} />
+          </Route>
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </>
+      )}
+    </Routes>
+  );
 };
 
-// Main App component sets up the router and global components like InitializeNavigation.
 function App() {
   return (
     <HashRouter>
       <InitializeNavigation />
-      <AppContent /> 
+      <AppContent />
     </HashRouter>
   );
 }

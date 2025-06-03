@@ -49,6 +49,8 @@ export const useAuth = () => {
       if (user) {
         const details = await authService.getUserDetails();
         setUserDetails(details);
+        navigateTo('/dashboard', { replace: true });
+
       }
       // Removed 'else' block: if 'user' is null, authService.login would have thrown,
       // and execution would be in the catch block.

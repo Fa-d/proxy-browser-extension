@@ -60,8 +60,6 @@ export const ServerListPage: React.FC = () => {
       >
         <Toolbar
           sx={{
-            px: 2,
-            py: 1,
             minHeight: 56,
             bgcolor: 'primary.main',
             color: 'primary.contrastText',
