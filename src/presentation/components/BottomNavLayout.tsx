@@ -2,22 +2,20 @@ import React, { useEffect } from 'react';
 import Paper from '@mui/material/Paper';
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
-import HomeIcon from '@mui/icons-material/Home'; // Represents Dashboard
-import StorageIcon from '@mui/icons-material/Storage'; // Represents ServerList
-import PersonIcon from '@mui/icons-material/Person';   // Represents Profile
+import HomeIcon from '@mui/icons-material/Home';
+import StorageIcon from '@mui/icons-material/Storage';
+import PersonIcon from '@mui/icons-material/Person';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const BottomNavLayout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Determines the active tab based on the current path.
-  // Expects paths like '/home/dashboard', '/home/serverlist', '/home/profile'
+
   const getCurrentPathSegment = React.useCallback(() => {
-    const pathname = location.pathname; // e.g., /home/dashboard
+    const pathname = location.pathname;
     if (pathname.includes('/profile')) return 'profile';
     if (pathname.includes('/serverlist')) return 'serverlist';
-    // Default to 'dashboard' for '/home/dashboard' or just '/home' or unrecognized paths
     return 'dashboard';
   }, [location.pathname]);
 
@@ -25,23 +23,21 @@ const BottomNavLayout: React.FC = () => {
 
   useEffect(() => {
     setValue(getCurrentPathSegment());
-  }, [getCurrentPathSegment, location.pathname]); // Re-evaluate when path changes
+  }, [getCurrentPathSegment, location.pathname]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-    setValue(newValue); // Update local state for immediate UI feedback
-    // Navigate to the corresponding route under /home/
-    // e.g., if newValue is 'dashboard', navigates to '/home/dashboard'
+    setValue(newValue);
     navigate(`/home/${newValue}`);
   };
 
   return (
     <Paper
       sx={{
-        position: 'fixed', // Fixed position at the bottom
+        position: 'fixed',
         bottom: 0,
         left: 0,
         right: 0,
-        zIndex: (theme) => theme.zIndex.drawer + 1, // Ensure it's above most other content
+        zIndex: (theme) => theme.zIndex.drawer + 1,
         borderTop: (theme) => `1px solid ${theme.palette.divider}`,
       }}
       elevation={3}
@@ -52,8 +48,8 @@ const BottomNavLayout: React.FC = () => {
         onChange={handleChange}
       >
         <BottomNavigationAction
-          label="Dashboard" // "Home" typically implies the main dashboard screen
-          value="dashboard" // This value will be used in handleChange to navigate
+          label="Dashboard"
+          value="dashboard"
           icon={<HomeIcon />}
         />
         <BottomNavigationAction

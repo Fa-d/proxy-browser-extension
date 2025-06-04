@@ -12,14 +12,11 @@ import {
   Toolbar,
   Typography,
   Divider,
-  // Tooltip, // Removed as Refresh button is commented out
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-// import RefreshIcon from '@mui/icons-material/Refresh'; // Removed as Refresh button is commented out
-
 import { useServers } from '../hooks/useServers';
-import { navigateTo } from '../../infrastructure/navigation/RouterService';
 import { Server } from '../../domain/models/Server';
+import { useNavigate } from 'react-router-dom'
 
 export const ServerListPage: React.FC = () => {
   const {
@@ -28,17 +25,17 @@ export const ServerListPage: React.FC = () => {
     selectServer,
     serverError,
   } = useServers();
+  const navigate = useNavigate();
 
   const handleServerSelect = async (server: Server) => {
     await selectServer(server);
-    navigateTo('/dashboard', { state: { shouldConnect: 'true' } });
+    navigate('/dashboard', { state: { shouldConnect: 'true' } });
   };
 
   return (
     <Box
       sx={{
-        height: '100%', // Changed from minHeight: '100vh'
-        // bgcolor: 'background.default', // Removed, assuming BottomNavLayout or App.tsx handles it
+        height: '100%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -71,7 +68,7 @@ export const ServerListPage: React.FC = () => {
           <IconButton
             edge="start"
             color="inherit"
-            onClick={() => navigateTo('/dashboard')}
+            onClick={() => setTimeout(() => navigate('/home/dashboard'))}
             aria-label="back"
             sx={{ mr: 1 }}
           >

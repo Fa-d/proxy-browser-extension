@@ -10,12 +10,13 @@ import Divider from '@mui/joy/Divider';
 import { Typography as MuiTypography } from '@mui/material';
 import { useAuth } from '../hooks/useAuth';
 import { AuthCredentials } from '../../domain/repositories/AuthRepository';
-import { navigateTo } from '../../infrastructure/navigation/RouterService';
+import { useNavigate } from 'react-router-dom'
 
-export default function LoginPage() {
+const LoginPage: React.FC = () => {
   const [inputUsername, setUsername] = React.useState('yakeki8173@f5url.com');
   const [inputPassword, setPassword] = React.useState('123456');
   const { login, isLoading, authError } = useAuth();
+  const navigate = useNavigate();
 
   const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
@@ -29,7 +30,7 @@ export default function LoginPage() {
     event.preventDefault();
     const credentials: AuthCredentials = { email: inputUsername, password: inputPassword };
     await login(credentials).then(() => {
-      navigateTo('/home', { replace: true });
+      setTimeout(() => navigate('/home', { replace: true }), 100);
     });
   }
 
@@ -131,3 +132,5 @@ export default function LoginPage() {
     </CssVarsProvider>
   );
 }
+
+export default LoginPage;

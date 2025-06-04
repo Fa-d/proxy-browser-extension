@@ -7,7 +7,7 @@ import { RemoteIpRepository } from '../../infrastructure/repositories/RemoteIpRe
 import { ServerRepository } from '../../domain/repositories/ServerRepository';
 import { ApiServerRepository } from '../../infrastructure/repositories/ApiServerRepository';
 
-export class ProxyService { // Removed "implements ConnectProxy, DisconnectProxy, GetConnectionDetails"
+export class ProxyService {
   private proxyRepository: ProxyRepository;
   private ipRepository: IpRepository;
   private serverRepository: ServerRepository;
@@ -18,25 +18,25 @@ export class ProxyService { // Removed "implements ConnectProxy, DisconnectProxy
     this.serverRepository = new ApiServerRepository();
   }
 
-  async connect(server: Server): Promise<void> { // Renamed from executeConnect
+  async connect(server: Server): Promise<void> {
     console.log('ProxyService: connect called for server', server.url);
     await this.proxyRepository.connect(server);
   }
 
-  async disconnect(): Promise<void> { // Renamed from executeDisconnect
+  async disconnect(): Promise<void> {
     console.log('ProxyService: disconnect called');
     await this.proxyRepository.disconnect();
   }
 
-  async getConnectionDetails(): Promise<ConnectionDetails> { // Renamed from executeGetConnectionDetails
+  async getConnectionDetails(): Promise<ConnectionDetails> {
     console.log('ProxyService: getConnectionDetails called');
     const status = await this.proxyRepository.getProxyStatus();
     const ip = await this.ipRepository.getCurrentIp();
     let selectedServerUrl: string | undefined = undefined;
 
     if (status.isActive) {
-        const selectedServer = await this.serverRepository.getSelectedServer();
-        selectedServerUrl = selectedServer?.url;
+      const selectedServer = await this.serverRepository.getSelectedServer();
+      selectedServerUrl = selectedServer?.url;
     }
 
     return {
@@ -45,5 +45,4 @@ export class ProxyService { // Removed "implements ConnectProxy, DisconnectProxy
       selectedServerUrl: selectedServerUrl
     };
   }
-  // Removed the problematic generic 'execute' method
 }

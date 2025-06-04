@@ -1,10 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback ,} from 'react';
 import { User } from '../../domain/models/User';
 import { AuthCredentials, UserDetails } from '../../domain/repositories/AuthRepository';
 import { AuthService } from '../../application/services/AuthService';
-import { navigateTo } from '../../infrastructure/navigation/RouterService'; // Import for navigation
-
-// Instantiate the service. In a larger app, consider context or a service locator.
+import { useNavigate } from 'react-router-dom'
 const authService = new AuthService();
 
 export const useAuth = () => {
@@ -12,6 +10,7 @@ export const useAuth = () => {
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [authError, setAuthError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const checkUserSession = useCallback(async () => {
     setIsLoading(true);
@@ -68,17 +67,15 @@ export const useAuth = () => {
       await authService.logout();
       setCurrentUser(null);
       setUserDetails(null);
-      navigateTo('/login', { replace: true }); // Navigate after successful logout
+      setTimeout(() => navigate('/login', { replace: true }), 100);
     } catch (error: any) {
       console.error("useAuth: Error during logout", error);
       setAuthError(error.message || 'Logout failed.');
-      // Ensure states are cleared even if authService.logout() had an issue
       setCurrentUser(null);
       setUserDetails(null);
-      navigateTo('/login', { replace: true }); // Navigate even if backend logout fails
+      setTimeout(() => navigate('/login', { replace: true }), 100); 
     }
-    // isLoading is not managed here as logout is primarily a state clearing action.
-    // App.tsx will react to currentUser being null.
+
   }, []);
 
   return {

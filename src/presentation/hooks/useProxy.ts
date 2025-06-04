@@ -7,29 +7,25 @@ const proxyService = new ProxyService();
 
 export const useProxy = () => {
   const [connectionDetails, setConnectionDetails] = useState<ConnectionDetails | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false); // For connect/disconnect actions
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchConnectionDetails = useCallback(async () => {
-    // This can be called frequently, so don't set main isLoading for it
-    // unless it's a specific user-initiated refresh.
     setError(null);
     try {
       const details = await proxyService.getConnectionDetails();
       setConnectionDetails(details);
     } catch (err: any) {
       console.error("useProxy - fetchConnectionDetails error:", err);
-      // Don't necessarily set a visible error for failed polls, could be transient
     } finally {
     }
   }, []);
 
-  // Initial fetch and polling for IP and connection status
   useEffect(() => {
     fetchConnectionDetails(); // Initial fetch
     const intervalId = setInterval(() => {
       fetchConnectionDetails();
-    }, 5000); // Poll every 5 seconds, adjust as needed
+    }, 5000);
 
     return () => clearInterval(intervalId); // Cleanup on unmount
   }, [fetchConnectionDetails]);
@@ -69,17 +65,12 @@ export const useProxy = () => {
     }
   }, [fetchConnectionDetails]);
 
-  // Effect to update connection details if isConnected state changes from an external source (e.g. browser action)
-  // This relies on chrome.proxy.onProxyError and chrome.proxy.settings.onChange if available,
-  // or more frequent polling if direct event listening isn't feasible in the hook.
-  // For now, the polling handles updates.
-
   return {
     connectionDetails,
-    isConnecting: isLoading, // Renamed for clarity
+    isConnecting: isLoading,
     proxyError: error,
     connectProxy: connect,
     disconnectProxy: disconnect,
-    refreshConnectionDetails: fetchConnectionDetails, // Expose manual refresh
+    refreshConnectionDetails: fetchConnectionDetails
   };
 };

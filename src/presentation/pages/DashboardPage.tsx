@@ -6,24 +6,25 @@ import {
   Typography,
   Avatar,
   CircularProgress,
-  // IconButton, // Removed as it's not used
   Button,
   Divider,
   useTheme,
 } from '@mui/material';
-import { CloudUploadOutlined, CloudDownloadRounded, ArrowForwardIos } from '@mui/icons-material'; // Removed Logout as LogoutIcon
+import { CloudUploadOutlined, CloudDownloadRounded, ArrowForwardIos } from '@mui/icons-material';
 import Toolbar from '@mui/material/Toolbar';
 import Lottie from "lottie-react";
 import animationPassedData from "../assets/connecting.json";
-import { useLocation } from "react-router-dom";
+import { useLocation , useNavigate} from "react-router-dom";
 import { useSpeedometer } from '../hooks/useSpeedometer';
 import { useProxy } from '../hooks/useProxy';
 import { useServers } from '../hooks/useServers';
-import { navigateTo } from '../../infrastructure/navigation/RouterService';
+
 
 const DashboardPage: React.FC = () => {
   const theme = useTheme();
   const location = useLocation();
+    const navigate = useNavigate();
+  
   const {
     connectionDetails,
     isConnecting,
@@ -43,7 +44,7 @@ const DashboardPage: React.FC = () => {
   useEffect(() => {
     const shouldConnectOtherPage = location.state?.shouldConnect === 'true';
     if (shouldConnectOtherPage && selectedServer && connectionDetails && !connectionDetails.isConnected) {
-      navigateTo(location.pathname, { replace: true, state: { ...location.state, shouldConnect: 'false' } });
+      navigate(location.pathname, { replace: true, state: { ...location.state, shouldConnect: 'false' } });
       handleConnectDisconnect();
     }
   }, [location.state, selectedServer, connectionDetails, location.pathname]);
@@ -54,7 +55,7 @@ const DashboardPage: React.FC = () => {
 
   const handleConnectDisconnect = async () => {
     if (!selectedServer && !connectionDetails?.isConnected) {
-      alert("Please select a server from the server list first."); 
+      alert("Please select a server from the server list first.");
       return;
     }
     setIsProcessingProxyAction(true);
@@ -64,7 +65,7 @@ const DashboardPage: React.FC = () => {
       await connectProxy(selectedServer);
     }
     await refreshConnectionDetails();
-    setTimeout(() => setIsProcessingProxyAction(false), 1200); 
+    setTimeout(() => setIsProcessingProxyAction(false), 1200);
   };
 
   const defaultImageUrl = "/thunder.svg";
@@ -86,12 +87,12 @@ const DashboardPage: React.FC = () => {
     <Box
       sx={{
         display: 'flex',
-        flexDirection: 'column', 
+        flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center', 
-        width: '100%', 
+        justifyContent: 'center',
+        width: '100%',
         flexGrow: 1,
-        p: 2, 
+        p: 2,
         boxSizing: 'border-box',
       }}
     >
@@ -243,7 +244,7 @@ const DashboardPage: React.FC = () => {
               alignItems: 'center',
               gap: 2,
             }}
-            onClick={() => navigateTo("/serverList")}
+            onClick={() => setTimeout(() => navigate("/home/serverList"))}
             endIcon={<ArrowForwardIos sx={{ fontSize: 18 }} />}
           >
             <Box>

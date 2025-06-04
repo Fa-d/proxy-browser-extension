@@ -1,15 +1,11 @@
-chrome.webRequest.onAuthRequired.addListener(
-  function (details) {
-    return {
-      authCredentials: {
-        username: 'azvesxqf',
-        password: 'i4904jb14zb9',
-      }
-    };
-  },
-  { urls: ["<all_urls>"] },
-  ['blocking']
-);
+function showNotification(title, message) {
+  chrome.notifications.create({
+    type: "basic",
+    iconUrl: "thunder.png",
+    title: title,
+    message: message
+  });
+}
 
 function setProxy(passedUrl) {
   var config = {
@@ -167,25 +163,10 @@ chrome.webRequest.onSendHeaders.addListener(
       }
     }
 
-    // Fallback to requestBody size if Content-Length header is not present for uploads
-    // This part is tricky as onSendHeaders doesn't have requestBody.
-    // We might need to combine with onBeforeRequest for a more comprehensive upload tracking,
-    // but that adds complexity in correlating requests.
-    // For now, we primarily rely on Content-Length in request headers.
-    // If `details.requestBody` was available and reliable here, we could use it:
-    // if (contentLength === 0 && details.requestBody && details.requestBody.raw) {
-    //   details.requestBody.raw.forEach(part => {
-    //     if (part.bytes && part.bytes.byteLength) {
-    //       contentLength += part.bytes.byteLength;
-    //     }
-    //   });
-    // }
-
-
     if (contentLength > 0) {
       const tabData = await getTabData(details.tabId);
       tabData.totalBytesUploaded += contentLength;
-      tabData.lastUploadTimestamp = details.timeStamp; // Use request timestamp
+      tabData.lastUploadTimestamp = details.timeStamp; 
       await setTabData(details.tabId, tabData);
       console.log(`Tab ${details.tabId} uploaded ${contentLength} bytes. Total: ${tabData.totalBytesUploaded}`);
     }

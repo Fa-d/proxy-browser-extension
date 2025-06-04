@@ -1,27 +1,25 @@
 import { User } from '../../domain/models/User';
 import { AuthCredentials, AuthRepository, UserDetails } from '../../domain/repositories/AuthRepository';
-// No longer "implements LoginUser, LogoutUser, GetProfile" to avoid 'execute' signature issues
-// The hooks will call the specific methods like login, logout, getProfile.
 import { LocalStorageAuthRepository } from '../../infrastructure/repositories/LocalStorageAuthRepository';
 
-export class AuthService { // Removed "implements LoginUser, LogoutUser, GetProfile"
+export class AuthService {
   private authRepository: AuthRepository;
 
   constructor() {
     this.authRepository = new LocalStorageAuthRepository();
   }
 
-  async login(credentials: AuthCredentials): Promise<User | null> { // Renamed from executeLogin for clarity
+  async login(credentials: AuthCredentials): Promise<User | null> { 
     console.log('AuthService: login called');
     return this.authRepository.login(credentials);
   }
 
-  async logout(): Promise<void> { // Renamed from executeLogout
+  async logout(): Promise<void> { 
     console.log('AuthService: logout called');
     return this.authRepository.logout();
   }
 
-  async getProfile(): Promise<User | null> { // Renamed from executeGetProfile
+  async getProfile(): Promise<User | null> { 
     console.log('AuthService: getProfile called');
     return this.authRepository.getCurrentUser();
   }
@@ -34,5 +32,4 @@ export class AuthService { // Removed "implements LoginUser, LogoutUser, GetProf
     console.warn('AuthService: authRepository does not implement getUserDetails');
     return null;
   }
-  // Removed the problematic generic 'execute' method
 }
