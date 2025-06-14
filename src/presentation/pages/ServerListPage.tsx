@@ -8,13 +8,16 @@ import {
   ListItemAvatar,
   ListItemText,
   CircularProgress,
-  Box,
+  Box as MuiBox, // Alias MuiBox
   Toolbar,
   Typography,
   Divider,
 } from '@mui/material';
+// Chakra UI imports
+import { Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton, Box } from '@chakra-ui/react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useServers } from '../hooks/useServers';
+import { useProxy } from '../hooks/useProxy'; // Import useProxy
 import { Server } from '../../domain/models/Server';
 import { useNavigate } from 'react-router-dom'
 
@@ -25,6 +28,7 @@ export const ServerListPage: React.FC = () => {
     selectServer,
     serverError,
   } = useServers();
+  const { proxyError, clearProxyError } = useProxy(); // Use the hook
   const navigate = useNavigate();
 
   const handleServerSelect = async (server: Server) => {
@@ -33,7 +37,7 @@ export const ServerListPage: React.FC = () => {
   };
 
   return (
-    <Box
+    <MuiBox // Changed to MuiBox
       sx={{
         height: '100%',
         display: 'flex',
@@ -88,11 +92,22 @@ export const ServerListPage: React.FC = () => {
           </Typography>
         </Toolbar>
         <Divider />
-        <Box sx={{ px: 3, py: 2, flex: 1, minHeight: 350, maxHeight: 500, overflowY: 'auto' }}>
+        <MuiBox sx={{ px: 3, py: 2, flex: 1, minHeight: 350, maxHeight: 500, overflowY: 'auto' }}> {/* Changed to MuiBox */}
+          {/* Proxy Error Alert */}
+          {proxyError && (
+            <Alert status="error" mt={2} mb={2} variant="solid"> {/* Adjusted margins */}
+              <AlertIcon />
+              <Box flex="1"> {/* Chakra UI Box */}
+                <AlertTitle mr={2}>Proxy Connection Error!</AlertTitle>
+                <AlertDescription>{proxyError}</AlertDescription>
+              </Box>
+              <CloseButton alignSelf="flex-start" position="relative" right={-1} top={-1} onClick={clearProxyError} />
+            </Alert>
+          )}
           {isLoadingServers ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}>
+            <MuiBox sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}> {/* Changed to MuiBox */}
               <CircularProgress color="primary" />
-            </Box>
+            </MuiBox>
           ) : serverError ? (
             <Typography color="error" sx={{ textAlign: 'center', mt: 4 }}>
               Error: {serverError}
