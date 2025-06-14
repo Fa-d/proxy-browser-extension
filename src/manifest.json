@@ -7,10 +7,10 @@
         "default_popup": "index.html",
         "default_title": "Proxy Settings",
         "default_icon": {
-            "16": "thunder.png",
-            "32": "thunder.png",
-            "48": "thunder.png",
-            "128": "thunder.png"
+            "16": "img/thunder.png",
+            "32": "img/thunder.png",
+            "48": "img/thunder.png",
+            "128": "img/thunder.png"
         }
     },
     "background": {
@@ -31,9 +31,9 @@
         "<all_urls>"
     ],
     "icons": {
-        "16": "thunder.png",
-        "32": "thunder.png",
-        "48": "thunder.png",
-        "128": "thunder.png"
+        "16": "img/thunder.png",
+        "32": "img/thunder.png",
+        "48": "img/thunder.png",
+        "128": "img/thunder.png"
     }
 }
