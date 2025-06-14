@@ -2,7 +2,7 @@ import { Server } from '../../domain/models/Server';
 import { ServerRepository } from '../../domain/repositories/ServerRepository';
 import { IpBundleItem } from '../api/RealAuthApi';
 
-const IP_BUNDLE_STORAGE_KEY = 'ipBundle'; // Must match key used in LocalStorageAuthRepository
+const IP_BUNDLE_STORAGE_KEY = 'ipBundle'; 
 const SELECTED_SERVER_STORAGE_KEY = 'selectedServer';
 
 export class ApiServerRepository implements ServerRepository {
@@ -10,7 +10,6 @@ export class ApiServerRepository implements ServerRepository {
   async getServers(): Promise<Server[]> {
     const ipBundleJson = localStorage.getItem(IP_BUNDLE_STORAGE_KEY);
     if (!ipBundleJson) {
-      // This is a normal scenario if the user hasn't logged in or bundle is not set
       return [];
     }
 
@@ -26,7 +25,7 @@ export class ApiServerRepository implements ServerRepository {
         id: item.ip_id.toString(),
         url: item.ip,
         country: item.country_name,
-        city: '', // City is not available in IpBundleItem
+        city: '',
       }));
       return servers;
     } catch (error) {
@@ -54,7 +53,6 @@ export class ApiServerRepository implements ServerRepository {
     if (server) {
       localStorage.setItem(SELECTED_SERVER_STORAGE_KEY, JSON.stringify(server));
     } else {
-      // If a null/undefined server is passed, clear the selected server
       localStorage.removeItem(SELECTED_SERVER_STORAGE_KEY);
     }
   }

@@ -1,5 +1,5 @@
 export interface Server {
-  id: string; // Could be the URL or a unique identifier
+  id: string; 
   url: string;
   country: string;
   city: string;

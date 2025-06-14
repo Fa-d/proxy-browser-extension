@@ -17,7 +17,7 @@ export class IpifyApi {
       }
     } catch (error) {
       console.error('IpifyApi: Error fetching IP', error);
-      throw error; // Re-throw the error to be handled by the caller
+      throw error; 
     }
   }
 }

@@ -16,18 +16,16 @@ export const useProxy = () => {
       const details = await proxyService.getConnectionDetails();
       setConnectionDetails(details);
     } catch (err: any) {
-      console.error("useProxy - fetchConnectionDetails error:", err);
     } finally {
     }
   }, []);
 
   useEffect(() => {
-    fetchConnectionDetails(); // Initial fetch
+    fetchConnectionDetails();
     const intervalId = setInterval(() => {
       fetchConnectionDetails();
     }, 5000);
-
-    return () => clearInterval(intervalId); // Cleanup on unmount
+    return () => clearInterval(intervalId);
   }, [fetchConnectionDetails]);
 
 
@@ -36,12 +34,9 @@ export const useProxy = () => {
     setError(null);
     try {
       await proxyService.connect(server);
-      // After connect, refresh details
       await fetchConnectionDetails();
     } catch (err: any) {
-      console.error("useProxy - connect error:", err);
       setError(err.message || 'Failed to connect to proxy');
-      // Optionally, re-fetch details even on error to get latest state
       await fetchConnectionDetails();
     } finally {
       setIsLoading(false);
@@ -53,12 +48,9 @@ export const useProxy = () => {
     setError(null);
     try {
       await proxyService.disconnect();
-      // After disconnect, refresh details
       await fetchConnectionDetails();
     } catch (err: any) {
-      console.error("useProxy - disconnect error:", err);
       setError(err.message || 'Failed to disconnect from proxy');
-      // Optionally, re-fetch details even on error to get latest state
       await fetchConnectionDetails();
     } finally {
       setIsLoading(false);

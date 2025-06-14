@@ -17,7 +17,6 @@ export const useServers = () => {
       const srvs = await serverService.getServers();
       setServers(srvs);
     } catch (err: any) {
-      console.error("useServers - fetchServers error:", err);
       setError(err.message || 'Failed to fetch servers');
     } finally {
       setIsLoading(false);
@@ -25,23 +24,20 @@ export const useServers = () => {
   }, []);
 
   const fetchSelectedServer = useCallback(async () => {
-    // No separate loading state for this, often called with other actions
     setError(null);
     try {
       const srv = await serverService.getSelectedServer();
       setSelectedServer(srv);
     } catch (err: any) {
-      console.error("useServers - fetchSelectedServer error:", err);
       setError(err.message || 'Failed to fetch selected server');
     }
   }, []);
 
   const selectServer = useCallback(async (server: Server) => {
-    // No separate loading state for this, typically a quick operation
     setError(null);
     try {
       await serverService.selectServer(server);
-      setSelectedServer(server); // Optimistically update or re-fetch
+      setSelectedServer(server); 
     } catch (err: any) {
       console.error("useServers - selectServer error:", err);
       setError(err.message || 'Failed to select server');
@@ -56,10 +52,10 @@ export const useServers = () => {
   return {
     servers,
     selectedServer,
-    isLoadingServers: isLoading, // Renamed for clarity if used with other loading states
+    isLoadingServers: isLoading, 
     serverError: error,
-    fetchServers, // Expose if manual refresh is needed
+    fetchServers,
     selectServer,
-    fetchSelectedServer, // Expose if manual refresh is needed
+    fetchSelectedServer,
   };
 };

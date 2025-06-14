@@ -1,3 +1,11 @@
+// Example PAC script pattern for documentation:
+// function FindProxyForURL(url, host) {
+//   if (shExpMatch(host, '*.example.com')) {
+//     return 'PROXY proxy.example.com:443';
+//   }
+//   return 'DIRECT';
+// }
+
 function showNotification(title, message) {
   chrome.notifications.create({
     type: "basic",
@@ -9,23 +17,9 @@ function showNotification(title, message) {
 
 function setProxy(passedUrl) {
   var config = {
-    mode: "fixed_servers",
-    rules: {
-      singleProxy: {
-        scheme: "https",
-        host: passedUrl,
-        port: 443
-      },
-      bypassList: [
-        "<local>",
-        "localhost",
-        "127.0.0.1",
-        "[::1]",
-        "*.local",
-        "10.0.0.0/8",
-        "172.16.0.0/12",
-        "192.168.0.0/16"
-      ]
+    mode: "pac_script",
+    pacScript: {
+      url: passedUrl
     }
   };
 
@@ -34,11 +28,11 @@ function setProxy(passedUrl) {
     scope: "regular"
   }, () => {
     if (chrome.runtime.lastError) {
-      console.error("Error setting proxy:", chrome.runtime.lastError.message);
-      showNotification("Proxy Error", `Failed to set proxy: ${chrome.runtime.lastError.message}`);
+      console.error("Error setting PAC script:", chrome.runtime.lastError.message);
+      //showNotification("Proxy Error", `Failed to set PAC script: ${chrome.runtime.lastError.message}`);
     } else {
-      console.log(`Proxy enabled: https://${proxySettings.serverAddress}:${proxySettings.serverPort}`);
-      showNotification("Proxy Enabled", `Connected via https://${proxySettings.serverAddress}:${proxySettings.serverPort}`);
+      console.log(`PAC script enabled from: ${passedUrl}`);
+      //showNotification("Proxy Enabled", `PAC script loaded from: ${passedUrl}`);
     }
   });
 }
@@ -49,10 +43,10 @@ function clearProxy() {
   }, () => {
     if (chrome.runtime.lastError) {
       console.error("Error clearing proxy:", chrome.runtime.lastError.message);
-      showNotification("Proxy Error", `Failed to clear proxy: ${chrome.runtime.lastError.message}`);
+      //showNotification("Proxy Error", `Failed to clear proxy: ${chrome.runtime.lastError.message}`);
     } else {
       console.log("Proxy cleared");
-      showNotification("Proxy Cleared", "Disconnected from proxy server");
+      //showNotification("Proxy Cleared", "Disconnected from proxy server");
     }
   });
 }
@@ -74,7 +68,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         };
       },
       { urls: ["<all_urls>"] },
-      ['blocking']
+      ['asyncBlocking']
     );
     if (request.url === "" || request.url == undefined) {
       clearProxy();

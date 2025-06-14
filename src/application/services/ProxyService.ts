@@ -19,17 +19,14 @@ export class ProxyService {
   }
 
   async connect(server: Server): Promise<void> {
-    console.log('ProxyService: connect called for server', server.url);
     await this.proxyRepository.connect(server);
   }
 
   async disconnect(): Promise<void> {
-    console.log('ProxyService: disconnect called');
     await this.proxyRepository.disconnect();
   }
 
   async getConnectionDetails(): Promise<ConnectionDetails> {
-    console.log('ProxyService: getConnectionDetails called');
     const status = await this.proxyRepository.getProxyStatus();
     const ip = await this.ipRepository.getCurrentIp();
     let selectedServerUrl: string | undefined = undefined;

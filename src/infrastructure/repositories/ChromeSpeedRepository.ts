@@ -8,7 +8,7 @@ interface TabSpeedData {
   lastUploadTimestamp: number;
 }
 
-const POLLING_INTERVAL_MS = 2000; // Poll every 2 seconds
+const POLLING_INTERVAL_MS = 2000;
 
 export class ChromeSpeedRepository implements SpeedRepository {
   private currentTabId: number | null = null;
@@ -24,14 +24,14 @@ export class ChromeSpeedRepository implements SpeedRepository {
 
   startMonitoring(tabId: number): void {
     if (this.pollingIntervalId) {
-      this.stopMonitoring(); // Stop previous monitoring if any
+      this.stopMonitoring();
     }
     this.currentTabId = tabId;
-    this.lastDownloadData = null; // Reset for the new tab
+    this.lastDownloadData = null;
     this.lastUploadData = null;
     this.latestSpeedInfo = null;
 
-    this.pollSpeedData(); // Initial poll
+    this.pollSpeedData();
     this.pollingIntervalId = setInterval(() => this.pollSpeedData(), POLLING_INTERVAL_MS);
   }
 
@@ -47,8 +47,6 @@ export class ChromeSpeedRepository implements SpeedRepository {
   }
 
   async getCurrentSpeedInfo(): Promise<SpeedInfo | null> {
-    // This method returns the latest calculated speed from the polling.
-    // It's async to match the interface, but the value is updated by pollSpeedData.
     return this.latestSpeedInfo;
   }
 
@@ -69,7 +67,6 @@ export class ChromeSpeedRepository implements SpeedRepository {
         let downloadSpeed = 0;
         let uploadSpeed = 0;
 
-        // Calculate download speed
         if (this.lastDownloadData && currentData.lastDownloadTimestamp > this.lastDownloadData.timestamp) {
           const timeDeltaSeconds = (currentData.lastDownloadTimestamp - this.lastDownloadData.timestamp) / 1000;
           if (timeDeltaSeconds > 0) {
@@ -82,7 +79,6 @@ export class ChromeSpeedRepository implements SpeedRepository {
           timestamp: currentData.lastDownloadTimestamp
         };
 
-        // Calculate upload speed
         if (this.lastUploadData && currentData.lastUploadTimestamp > this.lastUploadData.timestamp) {
           const timeDeltaSeconds = (currentData.lastUploadTimestamp - this.lastUploadData.timestamp) / 1000;
           if (timeDeltaSeconds > 0) {
@@ -95,24 +91,22 @@ export class ChromeSpeedRepository implements SpeedRepository {
           timestamp: currentData.lastUploadTimestamp
         };
 
-        // Ensure speeds are not negative (can happen if data resets or due to timestamp race conditions on init)
         downloadSpeed = Math.max(0, downloadSpeed);
         uploadSpeed = Math.max(0, uploadSpeed);
 
         this.latestSpeedInfo = this.formatSpeedInfo(downloadSpeed, uploadSpeed);
 
       } else {
-        // No data for this tab yet, or it was cleared. Reset speeds.
         this.latestSpeedInfo = this.formatSpeedInfo(0, 0);
       }
     } catch (e) {
       console.error("ChromeSpeedRepository: Error polling speed data:", e);
-      this.latestSpeedInfo = this.formatSpeedInfo(0, 0); // Reset on error
+      this.latestSpeedInfo = this.formatSpeedInfo(0, 0);
     }
   }
 
   private formatSpeed(bytesPerSecond: number): { speed: number; unit: string } {
-    if (bytesPerSecond < 0) bytesPerSecond = 0; // Should not happen with Math.max(0, ...)
+    if (bytesPerSecond < 0) bytesPerSecond = 0;
 
     if (bytesPerSecond < 1024) {
       return { speed: parseFloat(bytesPerSecond.toFixed(1)), unit: 'B/s' };

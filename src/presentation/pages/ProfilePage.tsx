@@ -1,39 +1,33 @@
-// src/presentation/pages/ProfilePage.tsx
 import React from 'react';
 import { Box, Card, CardContent, Typography, Button, Divider, CircularProgress, Avatar } from '@mui/material';
 import { useAuth } from '../hooks/useAuth';
 import LogoutIcon from '@mui/icons-material/Logout'; // Standard MUI logout icon
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'; // Standard MUI profile icon
+import { useNavigate } from 'react-router-dom'
+import { useAuthContext } from '../contexts/AuthContext';
 
 
 const ProfilePage: React.FC = () => {
-  const { currentUser, userDetails, logout, isLoading } = useAuth();
+  const { currentUser, userDetails, logout, isLoading } = useAuthContext();
 
-  // When isLoading is true, display only the CircularProgress centered
   if (isLoading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'calc(100vh - 112px)', p: 3 }}>
-        {/* 112px approx for top bar (if any) + bottom nav */}
         <CircularProgress />
       </Box>
     );
   }
 
-  // When not loading, check if currentUser exists
   if (!currentUser) {
-    // Fallback for !currentUser (when not loading)
-    // This state should ideally be prevented by the router redirecting to /login
-    // if currentUser is null after isLoading is false.
     return (
       <Box sx={{ p: 3, textAlign: 'center' }}>
         <Typography variant="h6">User not found</Typography>
         <Typography>Please try logging in again.</Typography>
       </Box>
     );
+
   }
 
-  // If isLoading is false AND currentUser exists, render user details and Logout button
-  // Provide fallbacks for display if userDetails is not fully populated but currentUser exists
   const displayName = userDetails?.fullName || currentUser.email;
   const displayPackage = userDetails?.packageName || 'N/A';
   const displayValidity = userDetails?.validityDate || 'N/A';
@@ -44,9 +38,9 @@ const ProfilePage: React.FC = () => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'flex-start',
-        p: { xs: 1, sm: 2 }, // Responsive padding
+        p: { xs: 1, sm: 2 },
         pt: { xs: 2, sm: 4 },
-        minHeight: '100%', // Let BottomNavLayout handle overall height
+        minHeight: '100%',
         boxSizing: 'border-box',
       }}
     >
@@ -55,7 +49,7 @@ const ProfilePage: React.FC = () => {
           minWidth: 300,
           maxWidth: 480,
           width: '100%',
-          borderRadius: { xs: 2, sm: 3 }, // Responsive border radius
+          borderRadius: { xs: 2, sm: 3 },
           boxShadow: { xs: 3, sm: 6 },
         }}
       >
@@ -67,7 +61,7 @@ const ProfilePage: React.FC = () => {
             {displayName}
           </Typography>
           <Divider sx={{ my: 2 }} />
-          <Box sx={{ textAlign: 'left', my: 2, px: { xs: 1, sm: 0 } }}> {/* Inner padding for text on small screens */}
+          <Box sx={{ textAlign: 'left', my: 2, px: { xs: 1, sm: 0 } }}>
             <Typography variant="subtitle1" gutterBottom>
               <strong>Email:</strong> {currentUser.email}
             </Typography>
@@ -86,7 +80,9 @@ const ProfilePage: React.FC = () => {
             variant="contained"
             color="primary"
             startIcon={<LogoutIcon />}
-            onClick={logout}
+            onClick={async () => {
+              await logout();
+            }}
             fullWidth
             sx={{ mt: 2, py: 1.5, borderRadius: 2, fontWeight: 'bold' }}
           >
@@ -94,8 +90,8 @@ const ProfilePage: React.FC = () => {
           </Button>
         </CardContent>
       </Card>
-    </Box>
+    </Box >
   );
 };
-
 export default ProfilePage;
+

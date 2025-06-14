@@ -1,4 +1,3 @@
-// src/App.tsx
 import React, { useEffect } from 'react';
 import { useAuth } from './presentation/hooks/useAuth';
 import LoginPage from './presentation/pages/LoginPage';
@@ -7,22 +6,13 @@ import { ServerListPage } from './presentation/pages/ServerListPage';
 import ProfilePage from './presentation/pages/ProfilePage';
 import HomePage from './presentation/pages/HomePage';
 import { Box, CircularProgress } from '@mui/material';
-import { MemoryRouter, Routes, Route, Navigate, Outlet, NavigateFunction } from 'react-router-dom';
-//import { setNavigate } from './infrastructure/navigation/RouterService';
-import { useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, HashRouter } from 'react-router-dom';
+import { AuthProvider, useAuthContext } from './presentation/contexts/AuthContext';
 
-
-// const InitializeNavigation: React.FC = () => {
-//   const navigate = useNavigate();
-//   useEffect(() => {
-//     setNavigate(navigate);
-//   }, [navigate]);
-//   return null;
-// };
 
 const AppContent: React.FC = () => {
-  const { currentUser, isLoading } = useAuth();
-  const navigate = useNavigate();
+  const { currentUser, isLoading } = useAuthContext();
+
   useEffect(() => {
     console.log('currentUser changed:', currentUser);
   }, [currentUser]);
@@ -77,7 +67,7 @@ const AppContent: React.FC = () => {
         }
       />
 
-      <Route
+      {/* <Route
         path="*"
         element={
           currentUser ? (
@@ -86,7 +76,7 @@ const AppContent: React.FC = () => {
             <Navigate to="/login" replace />
           )
         }
-      />
+      /> */}
     </Routes>
   );
 
@@ -94,9 +84,11 @@ const AppContent: React.FC = () => {
 
 function App() {
   return (
-    <MemoryRouter>
-      <AppContent />
-    </MemoryRouter>
+    <HashRouter>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </HashRouter>
   );
 }
 

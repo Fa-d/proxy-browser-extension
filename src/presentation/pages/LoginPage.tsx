@@ -10,13 +10,12 @@ import Divider from '@mui/joy/Divider';
 import { Typography as MuiTypography } from '@mui/material';
 import { useAuth } from '../hooks/useAuth';
 import { AuthCredentials } from '../../domain/repositories/AuthRepository';
-import { useNavigate } from 'react-router-dom'
+import { useAuthContext } from '../contexts/AuthContext';
 
 const LoginPage: React.FC = () => {
   const [inputUsername, setUsername] = React.useState('yakeki8173@f5url.com');
   const [inputPassword, setPassword] = React.useState('123456');
-  const { login, isLoading, authError } = useAuth();
-  const navigate = useNavigate();
+  const { login, isLoading, authError, currentUser } = useAuthContext();
 
   const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
@@ -29,9 +28,7 @@ const LoginPage: React.FC = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const credentials: AuthCredentials = { email: inputUsername, password: inputPassword };
-    await login(credentials).then(() => {
-      setTimeout(() => navigate('/home', { replace: true }), 100);
-    });
+    await login(credentials);
   }
 
   return (

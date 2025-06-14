@@ -1,6 +1,6 @@
 import { AuthCredentials, AuthRepository, UserDetails } from '../../domain/repositories/AuthRepository';
 import { User } from '../../domain/models/User';
-import { RealAuthApi, RealAuthApiResponse, IpBundleItem } from '../api/RealAuthApi';
+import { RealAuthApi } from '../api/RealAuthApi';
 
 const USER_STORAGE_KEY = 'currentUser';
 const IP_BUNDLE_STORAGE_KEY = 'ipBundle';
@@ -39,8 +39,7 @@ export class LocalStorageAuthRepository implements AuthRepository {
 
         return user;
       }
-      // This case handles where RealAuthApi.login might return null (e.g., no password)
-      // before an error is thrown.
+
       this.clearAllAuthData();
       return null;
     } catch (error) {
@@ -60,7 +59,6 @@ export class LocalStorageAuthRepository implements AuthRepository {
       try {
         return JSON.parse(userJson) as User;
       } catch (error) {
-        console.error('LocalStorageAuthRepository: Error parsing core user data from localStorage', error);
         this.clearAllAuthData();
         return null;
       }
@@ -74,8 +72,7 @@ export class LocalStorageAuthRepository implements AuthRepository {
       try {
         return JSON.parse(detailsJson) as UserDetails;
       } catch (error) {
-        console.error('LocalStorageAuthRepository: Error parsing user details from localStorage', error);
-        localStorage.removeItem(USER_DETAILS_STORAGE_KEY); // Clear corrupted data
+        localStorage.removeItem(USER_DETAILS_STORAGE_KEY);
         return null;
       }
     }

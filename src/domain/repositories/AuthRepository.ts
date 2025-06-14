@@ -2,10 +2,9 @@ import { User } from '../models/User';
 
 export interface AuthCredentials {
   email: string;
-  password?: string; // Password might not always be needed (e.g. for auto-login)
+  password?: string;
 }
 
-// UserDetails interface (ensure it's defined here or imported if from a central types file)
 export interface UserDetails {
   packageName: string;
   validityDate: string;

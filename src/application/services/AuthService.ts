@@ -10,26 +10,21 @@ export class AuthService {
   }
 
   async login(credentials: AuthCredentials): Promise<User | null> { 
-    console.log('AuthService: login called');
     return this.authRepository.login(credentials);
   }
 
   async logout(): Promise<void> { 
-    console.log('AuthService: logout called');
     return this.authRepository.logout();
   }
 
   async getProfile(): Promise<User | null> { 
-    console.log('AuthService: getProfile called');
     return this.authRepository.getCurrentUser();
   }
 
   async getUserDetails(): Promise<UserDetails | null> {
-    console.log('AuthService: getUserDetails called');
     if (typeof this.authRepository.getUserDetails === 'function') {
       return this.authRepository.getUserDetails();
     }
-    console.warn('AuthService: authRepository does not implement getUserDetails');
     return null;
   }
 }

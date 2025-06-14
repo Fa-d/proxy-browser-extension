@@ -29,7 +29,7 @@ export const ServerListPage: React.FC = () => {
 
   const handleServerSelect = async (server: Server) => {
     await selectServer(server);
-    navigate('/dashboard', { state: { shouldConnect: 'true' } });
+    navigate('/home/dashboard', { state: { shouldConnect: 'true' } });
   };
 
   return (
