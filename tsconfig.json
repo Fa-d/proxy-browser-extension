@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
     "target": "ES2020",
+    "sourceMap": true,
+    "inlineSources": true,
     "useDefineForClassFields": true,
     "lib": [
       "ES2020",
@@ -23,8 +25,9 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "src"
-, "public/background.js"  ],
+    "src",
+    "public/background.js"
+  ],
   "references": [
     {
       "path": "./tsconfig.node.json"

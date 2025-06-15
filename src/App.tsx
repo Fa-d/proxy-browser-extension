@@ -13,10 +13,6 @@ import { AuthProvider, useAuthContext } from './presentation/contexts/AuthContex
 const AppContent: React.FC = () => {
   const { currentUser, isLoading } = useAuthContext();
 
-  useEffect(() => {
-    console.log('currentUser changed:', currentUser);
-  }, [currentUser]);
-
   if (isLoading) {
     return (
       <Box

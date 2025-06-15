@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "preLaunchTask": "Build Extension",
+            "type": "chrome",
+            "request": "launch",
+            "name": "Debug Extension",
+            "runtimeArgs": [
+                "--load-extension=${workspaceFolder}/dist",
+                "--disable-extensions-except=${workspaceFolder}/dist"
+            ],
+            "userDataDir": "${workspaceFolder}/.vscode/chrome-debug",
+            "webRoot": "${workspaceFolder}/dist"
+        }
+    ]
+}

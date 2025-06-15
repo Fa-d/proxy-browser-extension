@@ -8,7 +8,6 @@ import {
   ListItemAvatar,
   ListItemText,
   CircularProgress,
-  Box as MuiBox, // Alias MuiBox
   Toolbar,
   Typography,
   Divider,
@@ -37,7 +36,7 @@ export const ServerListPage: React.FC = () => {
   };
 
   return (
-    <MuiBox // Changed to MuiBox
+    <Box // Changed to MuiBox
       sx={{
         height: '100%',
         display: 'flex',
@@ -92,7 +91,7 @@ export const ServerListPage: React.FC = () => {
           </Typography>
         </Toolbar>
         <Divider />
-        <MuiBox sx={{ px: 3, py: 2, flex: 1, minHeight: 350, maxHeight: 500, overflowY: 'auto' }}> {/* Changed to MuiBox */}
+        <Box sx={{ px: 3, py: 2, flex: 1, minHeight: 350, maxHeight: 500, overflowY: 'auto' }}> =
           {/* Proxy Error Alert */}
           {proxyError && (
             <Alert status="error" mt={2} mb={2} variant="solid"> {/* Adjusted margins */}
@@ -105,9 +104,9 @@ export const ServerListPage: React.FC = () => {
             </Alert>
           )}
           {isLoadingServers ? (
-            <MuiBox sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}> {/* Changed to MuiBox */}
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}>
               <CircularProgress color="primary" />
-            </MuiBox>
+            </Box>
           ) : serverError ? (
             <Typography color="error" sx={{ textAlign: 'center', mt: 4 }}>
               Error: {serverError}

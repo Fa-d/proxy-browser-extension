@@ -91,11 +91,6 @@ export const useProxy = () => {
   return {
     connectionDetails,
     isConnecting: isLoading,
-    // If hookError should also be displayed, it needs to be returned.
-    // For now, sticking to the prompt to return `proxyError` for background messages.
-    // The original `proxyError: error` implied the hook's own error.
-    // To avoid confusion and fulfill the prompt, we return the new proxyError.
-    // If both are needed, they should have distinct names in the return object.
     proxyError: proxyError || hookError, // Combine errors, background error takes precedence
     clearProxyError, // Added this
     connectProxy: connect,

@@ -1,28 +1,31 @@
+import { safeSendMessage } from '../../background';
 import { Server } from '../../domain/models/Server';
 import { ProxyRepository } from '../../domain/repositories/ProxyRepository';
 
 export class ChromeProxyRepository implements ProxyRepository {
   async connect(server: Server): Promise<void> {
     return new Promise((resolve, reject) => {
-      chrome.runtime.sendMessage({ action: 'setProxy', url: server.url }, (response) => {
-        if (chrome.runtime.lastError) {
-          reject(new Error(chrome.runtime.lastError.message));
-        } else {
-          resolve();
-        }
-      });
+      safeSendMessage({ action: 'setProxy', url: server.url })
+      // chrome.runtime.sendMessage({ action: 'setProxy', url: server.url }, (response) => {
+      //   if (chrome.runtime.lastError) {
+      //     reject(new Error(chrome.runtime.lastError.message));
+      //   } else {
+      //     resolve();
+      //   }
+      // });
     });
   }
 
   async disconnect(): Promise<void> {
     return new Promise((resolve, reject) => {
-      chrome.runtime.sendMessage({ action: 'setProxy', url: '' }, (response) => {
-        if (chrome.runtime.lastError) {
-          reject(new Error(chrome.runtime.lastError.message));
-        } else {
-          resolve();
-        }
-      });
+      safeSendMessage({ action: 'setProxy', url: '' })
+      // chrome.runtime.sendMessage({ action: 'setProxy', url: '' }, (response) => {
+      //   if (chrome.runtime.lastError) {
+      //     reject(new Error(chrome.runtime.lastError.message));
+      //   } else {
+      //     resolve();
+      //   }
+      // });
     });
   }
 

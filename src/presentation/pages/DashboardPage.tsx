@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Box,
+
   Card,
   CardContent,
   Typography,
@@ -17,7 +17,7 @@ import { CloudUploadOutlined, CloudDownloadRounded, ArrowForwardIos } from '@mui
 import Toolbar from '@mui/material/Toolbar';
 import Lottie from "lottie-react";
 import animationPassedData from "../assets/connecting.json";
-import { useLocation , useNavigate} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useSpeedometer } from '../hooks/useSpeedometer';
 import { useProxy } from '../hooks/useProxy';
 import { useServers } from '../hooks/useServers';
@@ -26,8 +26,8 @@ import { useServers } from '../hooks/useServers';
 const DashboardPage: React.FC = () => {
   const theme = useTheme();
   const location = useLocation();
-    const navigate = useNavigate();
-  
+  const navigate = useNavigate();
+
   const {
     connectionDetails,
     isConnecting,
@@ -78,17 +78,17 @@ const DashboardPage: React.FC = () => {
 
   if (!connectionDetails) {
     return (
-      <Box height="100%" display="flex" alignItems="center" justifyContent="center" bgcolor={theme.palette.background.default}>
+      <MuiBox height="100%" display="flex" alignItems="center" justifyContent="center" bgcolor={theme.palette.background.default}>
         <Card sx={{ p: 4, minWidth: 340, borderRadius: 3, boxShadow: 6, textAlign: 'center' }}>
           <CircularProgress />
           <Typography sx={{ mt: 2 }}>Loading dashboard...</Typography>
         </Card>
-      </Box>
+      </MuiBox>
     );
   }
 
   return (
-    <MuiBox // Changed from Box to MuiBox to avoid conflict
+    <MuiBox
       sx={{
         display: 'flex',
         flexDirection: 'column',
@@ -132,8 +132,8 @@ const DashboardPage: React.FC = () => {
               : (connectionDetails.isConnected ? 'Connected' : 'Disconnected')}
           </Typography>
 
-          {/* Avatar or Lottie */}
-          <MuiBox sx={{ my: 2 }}> {/* Changed from Box to MuiBox */}
+
+          <MuiBox sx={{ my: 2 }}>
             {isProcessingProxyAction || isConnecting ? (
               <MuiBox sx={{ width: 120, height: 120 }}> {/* Changed from Box to MuiBox */}
                 <Lottie animationData={animationPassedData} loop={true} />
@@ -155,7 +155,7 @@ const DashboardPage: React.FC = () => {
                 onClick={handleConnectDisconnect}
               />
             )}
-          </Box>
+          </MuiBox>
 
           {/* IP Address */}
           <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mb: 2 }}>
@@ -165,7 +165,7 @@ const DashboardPage: React.FC = () => {
           </Typography>
 
           {/* Speedometer */}
-          <MuiBox // Changed from Box to MuiBox
+           <MuiBox
             sx={{
               display: 'flex',
               justifyContent: 'space-between',
@@ -177,8 +177,8 @@ const DashboardPage: React.FC = () => {
               gap: 2,
             }}
           >
-            <MuiBox sx={{ flex: 1, textAlign: 'center' }}> {/* Changed from Box to MuiBox */}
-              <MuiBox sx={{ {/* Changed from Box to MuiBox */}
+            <MuiBox sx={{ flex: 1, textAlign: 'center' }}>
+              <MuiBox sx={{
                 flex: 1,
                 display: 'flex',
                 flexDirection: 'row',
@@ -196,10 +196,10 @@ const DashboardPage: React.FC = () => {
                     ? `${speedInfo.downloadSpeed} ${speedInfo.downloadUnit}`
                     : '0 B/s'}
               </Typography>
-            </MuiBox> {/* Changed from Box to MuiBox */}
+            </MuiBox>
             <Divider orientation="vertical" flexItem />
-            <MuiBox sx={{ flex: 1, textAlign: 'center' }}> {/* Changed from Box to MuiBox */}
-              <MuiBox sx={{ {/* Changed from Box to MuiBox */}
+            <MuiBox sx={{ flex: 1, textAlign: 'center' }}>
+              <MuiBox sx={{
                 flex: 1,
                 display: 'flex',
                 flexDirection: 'row',
@@ -209,7 +209,7 @@ const DashboardPage: React.FC = () => {
               }}>
                 <CloudUploadOutlined sx={{ color: theme.palette.secondary.main, fontSize: 28, mr: 1 }} />
                 <Typography variant="caption" color="text.secondary">Upload</Typography>
-              </MuiBox> {/* Changed from Box to MuiBox */}
+              </MuiBox>
               <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                 {isLoadingSpeed
                   ? <CircularProgress size={16} />
@@ -217,10 +217,8 @@ const DashboardPage: React.FC = () => {
                     ? `${speedInfo.uploadSpeed} ${speedInfo.uploadUnit}`
                     : '0 B/s'}
               </Typography>
-            </MuiBox> {/* Changed from Box to MuiBox */}
-          </MuiBox> {/* Changed from Box to MuiBox */}
-
-          {/* Error Message using Chakra UI Alert */}
+            </MuiBox>
+          </MuiBox> 
           {proxyError && (
             <Alert status="error" mt={4} variant="solid" style={{ width: '100%', marginTop: '16px', marginBottom: '16px' }}>
               <AlertIcon />
@@ -267,7 +265,7 @@ const DashboardPage: React.FC = () => {
           </Button>
         </CardContent>
       </Card>
-    </Box>
+    </MuiBox>
   );
 };
 

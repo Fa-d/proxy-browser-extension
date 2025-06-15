@@ -20,6 +20,8 @@ export default defineConfig({
     })
   ],
   build: {
+    sourcemap: true,  // Changed to 'hidden'
+    minify: false,        // Disable minification for better debugging
     rollupOptions: {
       input: {
         // Ensure 'index.html' is correctly resolved if it's not at root or adjust as needed.
@@ -41,5 +43,8 @@ export default defineConfig({
         assetFileNames: 'assets/[name]-[hash][extname]',
       }
     }
+  },
+  define: {
+    __DEV__: true
   }
 });
