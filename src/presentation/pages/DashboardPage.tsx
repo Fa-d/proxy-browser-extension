@@ -31,8 +31,8 @@ const DashboardPage: React.FC = () => {
   const {
     connectionDetails,
     isConnecting,
-    proxyError, // This now comes from the updated hook (background or hook error)
-    clearProxyError, // Added this
+    proxyError,
+    clearProxyError, 
     connectProxy,
     disconnectProxy,
     refreshConnectionDetails

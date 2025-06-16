@@ -5,14 +5,16 @@ import DashboardPage from './presentation/pages/DashboardPage';
 import { ServerListPage } from './presentation/pages/ServerListPage';
 import ProfilePage from './presentation/pages/ProfilePage';
 import HomePage from './presentation/pages/HomePage';
-import { Box, CircularProgress } from '@mui/material';
+import { Box, Card, CircularProgress, Typography, useTheme } from '@mui/material';
 import { Routes, Route, Navigate, HashRouter } from 'react-router-dom';
 import { AuthProvider, useAuthContext } from './presentation/contexts/AuthContext';
+import { useProxy } from './presentation/hooks/useProxy';
 
 
 const AppContent: React.FC = () => {
   const { currentUser, isLoading } = useAuthContext();
-
+  const { connectionDetails } = useProxy();
+  const theme = useTheme();
   if (isLoading) {
     return (
       <Box
@@ -30,6 +32,19 @@ const AppContent: React.FC = () => {
       </Box>
     );
   }
+
+
+  if (!connectionDetails) {
+    return (
+      <Box height="100%" display="flex" alignItems="center" justifyContent="center" bgcolor={theme.palette.background.default}>
+        <Card sx={{ p: 4, minWidth: 340, borderRadius: 3, boxShadow: 6, textAlign: 'center' }}>
+          <CircularProgress />
+          <Typography sx={{ mt: 2 }}>Opening your app...</Typography>
+        </Card>
+      </Box>
+    );
+  }
+
   return (
     <Routes>
 

@@ -5,7 +5,8 @@
             "preLaunchTask": "Build Extension",
             "type": "chrome",
             "request": "launch",
-            "name": "Debug Extension",
+            "name": "Debug Extension (Canary)",
+            "runtimeExecutable": "/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary",
             "runtimeArgs": [
                 "--load-extension=${workspaceFolder}/dist",
                 "--disable-extensions-except=${workspaceFolder}/dist"

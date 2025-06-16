@@ -1,32 +1,50 @@
-import { safeSendMessage } from '../../background';
 import { Server } from '../../domain/models/Server';
 import { ProxyRepository } from '../../domain/repositories/ProxyRepository';
 
+function isReceivingEndError(err: any): boolean {
+  return (
+    err &&
+    typeof err.message === 'string' &&
+    err.message.includes('Could not establish connection. Receiving end does not exist.')
+  );
+}
+
+async function sendMessageWithRetry(message: any, retries = 1, delayMs = 300): Promise<any> {
+  return new Promise((resolve, reject) => {
+    function attempt(remaining: number) {
+      chrome.runtime.sendMessage(message, (response) => {
+        if (chrome.runtime.lastError) {
+          if (
+            isReceivingEndError(chrome.runtime.lastError) &&
+            remaining > 0
+          ) {
+            // Retry after a short delay
+            setTimeout(() => attempt(remaining - 1), delayMs);
+            return;
+          }
+          reject(
+            new Error(
+              isReceivingEndError(chrome.runtime.lastError)
+                ? 'Background service is not ready. Please try again.'
+                : chrome.runtime.lastError.message
+            )
+          );
+        } else {
+          resolve(response);
+        }
+      });
+    }
+    attempt(retries);
+  });
+}
+
 export class ChromeProxyRepository implements ProxyRepository {
   async connect(server: Server): Promise<void> {
-    return new Promise((resolve, reject) => {
-      safeSendMessage({ action: 'setProxy', url: server.url })
-      // chrome.runtime.sendMessage({ action: 'setProxy', url: server.url }, (response) => {
-      //   if (chrome.runtime.lastError) {
-      //     reject(new Error(chrome.runtime.lastError.message));
-      //   } else {
-      //     resolve();
-      //   }
-      // });
-    });
+    await sendMessageWithRetry({ action: 'setProxy', url: server.url }, 1, 300);
   }
 
   async disconnect(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      safeSendMessage({ action: 'setProxy', url: '' })
-      // chrome.runtime.sendMessage({ action: 'setProxy', url: '' }, (response) => {
-      //   if (chrome.runtime.lastError) {
-      //     reject(new Error(chrome.runtime.lastError.message));
-      //   } else {
-      //     resolve();
-      //   }
-      // });
-    });
+    await sendMessageWithRetry({ action: 'setProxy', url: '' }, 1, 300);
   }
 
   async getProxyStatus(): Promise<{ isActive: boolean }> {

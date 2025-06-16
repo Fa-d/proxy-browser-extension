@@ -8,18 +8,16 @@ const proxyService = new ProxyService();
 export const useProxy = () => {
   const [connectionDetails, setConnectionDetails] = useState<ConnectionDetails | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [hookError, setHookError] = useState<string | null>(null); // Renamed from error
-  const [proxyError, setProxyError] = useState<string | null>(null); // New state for background messages
+  const [hookError, setHookError] = useState<string | null>(null); 
+  const [proxyError, setProxyError] = useState<string | null>(null); 
 
   const fetchConnectionDetails = useCallback(async () => {
-    setHookError(null); // Use renamed setter
+    setHookError(null);
     try {
       const details = await proxyService.getConnectionDetails();
       setConnectionDetails(details);
     } catch (err: any) {
-      // This catch is empty in original, consider if setHookError should be used here
     } finally {
-      // Empty in original
     }
   }, []);
 
@@ -40,18 +38,18 @@ export const useProxy = () => {
     ) => {
       if (request.type === "proxyError") {
         setProxyError(request.message);
-        setHookError(null); // Clear other hook-specific errors if a background error comes in
+        setHookError(null);
       } else if (request.type === "proxySuccess") {
-        setProxyError(null); // Clear error on success
+        setProxyError(null); 
       }
-      return undefined; // Not sending a response back
+      return undefined; 
     };
 
-    chrome.runtime.onMessage.addListener(messageListener);
 
-    return () => {
-      chrome.runtime.onMessage.removeListener(messageListener);
-    };
+    //return () => { };
+     chrome.runtime.onMessage.addListener(messageListener);
+     return () => { chrome.runtime.onMessage.removeListener(messageListener); };
+
   }, []);
 
   const clearProxyError = () => {
