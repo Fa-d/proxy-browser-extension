@@ -9,9 +9,8 @@ import {
   Button,
   Divider,
   useTheme,
-  Box as MuiBox, // Alias MuiBox to avoid conflict if Chakra Box is also used directly
+  Box as MuiBox,
 } from '@mui/material';
-// Chakra UI imports
 import { Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton, Box } from '@chakra-ui/react';
 import { CloudUploadOutlined, CloudDownloadRounded, ArrowForwardIos } from '@mui/icons-material';
 import Toolbar from '@mui/material/Toolbar';
@@ -32,7 +31,7 @@ const DashboardPage: React.FC = () => {
     connectionDetails,
     isConnecting,
     proxyError,
-    clearProxyError, 
+    clearProxyError,
     connectProxy,
     disconnectProxy,
     refreshConnectionDetails
@@ -72,7 +71,7 @@ const DashboardPage: React.FC = () => {
     setTimeout(() => setIsProcessingProxyAction(false), 1200);
   };
 
-  const defaultImageUrl = "/thunder.svg";
+  const defaultImageUrl = "img/thunder.svg";
   const displayServerName = selectedServer?.city || selectedServer?.country || "Select a server";
   const displayServerUrl = selectedServer?.url || "No server selected";
 
@@ -95,18 +94,15 @@ const DashboardPage: React.FC = () => {
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
-        flexGrow: 1,
-        p: 2,
         boxSizing: 'border-box',
       }}
     >
       <Card sx={{
-        minWidth: 350,
+        minWidth: 300,
         maxWidth: 400,
         width: '100%',
         borderRadius: 4,
         boxShadow: 8,
-        p: 0,
         overflow: 'hidden',
         bgcolor: theme.palette.background.paper,
       }}>
@@ -165,7 +161,7 @@ const DashboardPage: React.FC = () => {
           </Typography>
 
           {/* Speedometer */}
-           <MuiBox
+          <MuiBox
             sx={{
               display: 'flex',
               justifyContent: 'space-between',
@@ -218,11 +214,11 @@ const DashboardPage: React.FC = () => {
                     : '0 B/s'}
               </Typography>
             </MuiBox>
-          </MuiBox> 
+          </MuiBox>
           {proxyError && (
             <Alert status="error" mt={4} variant="solid" style={{ width: '100%', marginTop: '16px', marginBottom: '16px' }}>
               <AlertIcon />
-              <Box flex="1"> {/* Chakra UI Box */}
+              <Box flex="1">
                 <AlertTitle mr={2}>Proxy Connection Error!</AlertTitle>
                 <AlertDescription>{proxyError}</AlertDescription>
               </Box>

@@ -4,21 +4,25 @@ import Box from '@mui/material/Box';
 import BottomNavLayout from '../components/BottomNavLayout';
 
 const BOTTOM_NAVIGATION_HEIGHT = '56px';
+const CONTENT_WIDTH = 340;
 const HomePage: React.FC = () => {
   return (
     <Box sx={{
-      display: 'flex', 
+      display: 'flex',
       flexDirection: 'column',
-       height: '100vh',
-      width: '100vw',
+      height: '100vh',
+      width: CONTENT_WIDTH,
+    
+      alignItems: 'center', // Center horizontally
+      justifyContent: 'center', // Center vertically if needed
     }}>
       <Box
         component="main"
         sx={{
-          flexGrow: 1,
-          overflowY: 'auto',
-          padding: 2,
           paddingBottom: `calc(${BOTTOM_NAVIGATION_HEIGHT} + 16px)`,
+          width: CONTENT_WIDTH,
+          maxWidth: '100vw',
+
         }}
       >
         <Outlet />

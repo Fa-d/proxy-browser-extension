@@ -17,7 +17,7 @@ export class ServerService {
     return this.serverRepository.getSelectedServer();
   }
 
-  async selectServer(server: Server): Promise<void> {
+  async selectServer(server: Server | null): Promise<void> {
     return this.serverRepository.selectServer(server);
   }
 }

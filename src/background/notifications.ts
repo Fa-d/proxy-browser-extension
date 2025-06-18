@@ -2,7 +2,7 @@
 export function showNotification(title: string, message: string) {
   chrome.notifications.create({
     type: "basic",
-    iconUrl: "img/thunder.png",
+    iconUrl: "thunder.png",
     title: title,
     message: message
   });

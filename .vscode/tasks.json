@@ -7,6 +7,14 @@
       "command": "npm run build",
       "group": "build",
       "problemMatcher": []
+    },
+    {
+      "label": "Vite: dev",
+      "type": "shell",
+      "command": "npm run dev:chrome",
+      "group": "build",
+      "isBackground": true,
+   
     }
   ]
 }

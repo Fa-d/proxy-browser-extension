@@ -22,17 +22,17 @@ export function setProxy(passedUrl: string) {
         mode: "pac_script",
         pacScript: { url: passedUrl }
     };
-    // chrome.proxy.settings.set({ value: config, scope: "regular" }, () => {
-    //     if (chrome.runtime.lastError) {
-    //         console.error("Error setting PAC script:", chrome.runtime.lastError.message);
-    //         showNotification("Proxy Error", `Failed to set PAC script: ${chrome.runtime.lastError.message}`);
-    //         chrome.runtime.sendMessage({ type: "proxyError", message: `Failed to set PAC script: ${chrome.runtime.lastError.message}` });
-    //     } else {
-    //         console.log(`PAC script enabled from: ${passedUrl}`);
-    //         showNotification("Proxy Enabled", `Proxy set to: ${passedUrl}`);
-    //         chrome.runtime.sendMessage({ type: "proxySuccess", message: `Proxy enabled: ${passedUrl}` });
-    //     }
-    // });
+    chrome.proxy.settings.set({ value: config, scope: "regular" }, () => {
+        if (chrome.runtime.lastError) {
+            console.error("Error setting PAC script:", chrome.runtime.lastError.message);
+            showNotification("Proxy Error", `Failed to set PAC script: ${chrome.runtime.lastError.message}`);
+            chrome.runtime.sendMessage({ type: "proxyError", message: `Failed to set PAC script: ${chrome.runtime.lastError.message}` });
+        } else {
+            console.log(`PAC script enabled from: ${passedUrl}`);
+            showNotification("Proxy Enabled", `Proxy set to: ${passedUrl}`);
+            chrome.runtime.sendMessage({ type: "proxySuccess", message: `Proxy enabled: ${passedUrl}` });
+        }
+    });
 }
 
 export function clearProxy() {

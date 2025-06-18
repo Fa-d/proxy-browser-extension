@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:chrome": "ln -sf src/manifest.json manifest.json && vite",
     "build": "tsc && vite build",
     "serve": "tsc && vite serve",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",

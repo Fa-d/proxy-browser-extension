@@ -5,11 +5,12 @@ import LogoutIcon from '@mui/icons-material/Logout'; // Standard MUI logout icon
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'; // Standard MUI profile icon
 import { useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../contexts/AuthContext';
+import { useServers } from '../hooks/useServers';
 
 
 const ProfilePage: React.FC = () => {
   const { currentUser, userDetails, logout, isLoading } = useAuthContext();
-
+  const { selectServer } = useServers();
   if (isLoading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'calc(100vh - 112px)', p: 3 }}>
@@ -38,8 +39,6 @@ const ProfilePage: React.FC = () => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'flex-start',
-        p: { xs: 1, sm: 2 },
-        pt: { xs: 2, sm: 4 },
         minHeight: '100%',
         boxSizing: 'border-box',
       }}
@@ -81,6 +80,7 @@ const ProfilePage: React.FC = () => {
             color="primary"
             startIcon={<LogoutIcon />}
             onClick={async () => {
+              await selectServer(null);
               await logout();
             }}
             fullWidth

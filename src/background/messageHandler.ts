@@ -29,6 +29,8 @@ export function registerMessageHandler() {
                         sendResponse({ status: "Proxy test failed" });
                     }
                 }
+            }else{
+                console.warn("Unknown action:", request.action , request.status);
             }
         } catch (e: any) {
             console.error("Error in onMessage listener:", e);
@@ -41,5 +43,40 @@ export function registerMessageHandler() {
             }
         }
         return true;
+    });
+
+    chrome.runtime.onConnect.addListener((port) => {
+        port.onMessage.addListener(async (request) => {
+            try {
+                if (request.action === 'setProxy') {
+                    if (chrome.webRequest.onAuthRequired.hasListener(authRequiredListener)) {
+                        chrome.webRequest.onAuthRequired.removeListener(authRequiredListener);
+                    }
+                    chrome.webRequest.onAuthRequired.addListener(
+                        authRequiredListener,
+                        { urls: ["<all_urls>"] },
+                        ['asyncBlocking']
+                    );
+                    if (!request.url) {
+                        setCurrentAuthCredentials({ username: '', password: '' });
+                        clearProxy();
+                        port.postMessage({ status: 'Proxy cleared' });
+                    } else {
+                        const isFunctional = await checkProxyFunctionality(request.url, request.username, request.password);
+                        if (isFunctional) {
+                            setCurrentAuthCredentials({ username: request.username, password: request.password });
+                            setProxy(request.url);
+                            port.postMessage({ status: 'Proxy set', url: request.url });
+                        } else {
+                            port.postMessage({ status: 'Proxy test failed' });
+                        }
+                    }
+                } else {
+                    port.postMessage({ status: 'Unknown action', action: request.action });
+                }
+            } catch (e: any) {
+                port.postMessage({ status: 'error', message: e.message });
+            }
+        });
     });
 }

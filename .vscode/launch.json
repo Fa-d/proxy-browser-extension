@@ -2,6 +2,19 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "preLaunchTask": "Vite: dev",
+            "type": "chrome",
+            "request": "launch",
+            "name": "Debug Extension (Vite Hot Reload)",
+            "runtimeExecutable": "/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary",
+            "runtimeArgs": [
+                "--load-extension=${workspaceFolder}",
+                "--disable-extensions-except=${workspaceFolder}"
+            ],
+            "userDataDir": "${workspaceFolder}/.vscode/chrome-debug",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
             "preLaunchTask": "Build Extension",
             "type": "chrome",
             "request": "launch",

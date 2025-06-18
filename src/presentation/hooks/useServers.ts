@@ -33,7 +33,7 @@ export const useServers = () => {
     }
   }, []);
 
-  const selectServer = useCallback(async (server: Server) => {
+  const selectServer = useCallback(async (server: Server | null) => {
     setError(null);
     try {
       await serverService.selectServer(server);

@@ -8,7 +8,6 @@ registerTabDataListeners();
 registerMessageHandler();
 
 
-
 // Example PAC script pattern for documentation:
 // function FindProxyForURL(url, host) {
 //   if (shExpMatch(host, '*.example.com')) {
