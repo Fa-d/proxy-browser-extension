@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
 
   Card,
@@ -20,6 +20,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useSpeedometer } from '../hooks/useSpeedometer';
 import { useProxy } from '../hooks/useProxy';
 import { useServers } from '../hooks/useServers';
+import thunderLogo from '../assets/rocket.png';
 
 
 const DashboardPage: React.FC = () => {
@@ -42,8 +43,6 @@ const DashboardPage: React.FC = () => {
   } = useServers();
   const { speedInfo, isLoadingSpeed } = useSpeedometer();
 
-  const [isProcessingProxyAction, setIsProcessingProxyAction] = useState(false);
-
   useEffect(() => {
     const shouldConnectOtherPage = location.state?.shouldConnect === 'true';
     if (shouldConnectOtherPage && selectedServer && connectionDetails && !connectionDetails.isConnected) {
@@ -61,14 +60,13 @@ const DashboardPage: React.FC = () => {
       alert("Please select a server from the server list first.");
       return;
     }
-    setIsProcessingProxyAction(true);
+    // No local UI state, just call the hook
     if (connectionDetails?.isConnected) {
       await disconnectProxy();
     } else if (selectedServer) {
       await connectProxy(selectedServer);
     }
     await refreshConnectionDetails();
-    setTimeout(() => setIsProcessingProxyAction(false), 1200);
   };
 
   const displayServerName = selectedServer?.city || selectedServer?.country || "Select a server";
@@ -107,7 +105,7 @@ const DashboardPage: React.FC = () => {
       }}>
         <Toolbar sx={{ px: 3, py: 2, bgcolor: theme.palette.background.paper }}>
           <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center', fontWeight: 700, letterSpacing: 1 }}>
-            Dashboard 1
+            Dashboard
           </Typography>
         </Toolbar>
         <Divider />
@@ -122,20 +120,21 @@ const DashboardPage: React.FC = () => {
               letterSpacing: 1,
             }}
           >
-            {isProcessingProxyAction
+            {isConnecting
               ? (connectionDetails.isConnected ? 'Disconnecting...' : 'Connecting...')
               : (connectionDetails.isConnected ? 'Connected' : 'Disconnected')}
           </Typography>
 
 
           <MuiBox sx={{ my: 2 }}>
-            {isProcessingProxyAction || isConnecting ? (
-              <MuiBox sx={{ width: 120, height: 120 }}> {/* Changed from Box to MuiBox */}
+            {isConnecting ? (
+              <MuiBox sx={{ width: 120, height: 120 }}>
                 <Lottie animationData={animationPassedData} loop={true} />
               </MuiBox>
             ) : (
               <Avatar
                 alt={displayServerName}
+                src={thunderLogo}
                 sx={{
                   width: 100,
                   height: 100,
@@ -145,7 +144,10 @@ const DashboardPage: React.FC = () => {
                   cursor: 'pointer',
                   transition: 'box-shadow 0.2s',
                   '&:hover': { boxShadow: 8 },
+                  padding: 2,
+                  objectFit: 'contain',
                 }}
+                imgProps={{ style: { padding: 20, objectFit: 'contain' } }}
                 onClick={handleConnectDisconnect}
               />
             )}
@@ -163,12 +165,15 @@ const DashboardPage: React.FC = () => {
             sx={{
               display: 'flex',
               justifyContent: 'space-between',
-              width: '100%',
+              width: '100%', // Match Button width
               bgcolor: theme.palette.action.hover,
               borderRadius: 2,
               p: 2,
               mb: 2,
               gap: 2,
+              boxSizing: 'border-box',
+              maxWidth: 400, // Match Card maxWidth
+              minWidth: 300, // Match Card minWidth
             }}
           >
             <MuiBox sx={{ flex: 1, textAlign: 'center' }}>
@@ -232,7 +237,6 @@ const DashboardPage: React.FC = () => {
               mt: 1,
               borderRadius: 2,
               textTransform: 'none',
-              justifyContent: 'flex-start',
               px: 2,
               py: 1.5,
               fontWeight: 500,
@@ -243,12 +247,16 @@ const DashboardPage: React.FC = () => {
               '&:hover': { bgcolor: theme.palette.action.hover },
               display: 'flex',
               alignItems: 'center',
+              justifyContent: 'space-between',
               gap: 2,
+              width: '100%', // Match Speedometer width
+              boxSizing: 'border-box',
+              maxWidth: 400, // Match Card maxWidth
+              minWidth: 300, // Match Card minWidth
             }}
             onClick={() => setTimeout(() => navigate("/home/serverList"))}
-            endIcon={<ArrowForwardIos sx={{ fontSize: 18 }} />}
           >
-            <MuiBox> {/* Changed from Box to MuiBox */}
+            <MuiBox>
               <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
                 {displayServerName}
               </Typography>
@@ -256,6 +264,7 @@ const DashboardPage: React.FC = () => {
                 {displayServerUrl}
               </Typography>
             </MuiBox>
+            <ArrowForwardIos sx={{ fontSize: 18 }} />
           </Button>
         </CardContent>
       </Card>

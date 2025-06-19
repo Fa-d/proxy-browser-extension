@@ -79,18 +79,7 @@ export const ServerListPage: React.FC = () => {
             position: 'relative',
           }}
         >
-          <IconButton
-            edge="start"
-            color="inherit"
-            onClick={() => setTimeout(() => navigate('/home/dashboard'))}
-            aria-label="back"
-            sx={{
-              position: 'absolute',
-              left: 8,
-            }}
-          >
-            <ArrowBackIcon />
-          </IconButton>
+
           <Typography
             variant="h6"
             component="div"

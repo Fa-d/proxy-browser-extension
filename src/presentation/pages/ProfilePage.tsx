@@ -6,10 +6,12 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle'; // Standard M
 import { useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../contexts/AuthContext';
 import { useServers } from '../hooks/useServers';
+import { useProxy } from '../hooks/useProxy';
 
 
 const ProfilePage: React.FC = () => {
   const { currentUser, userDetails, logout, isLoading } = useAuthContext();
+  const { connectionDetails, disconnectProxy } = useProxy();
   const { selectServer } = useServers();
   if (isLoading) {
     return (
@@ -80,6 +82,9 @@ const ProfilePage: React.FC = () => {
             color="primary"
             startIcon={<LogoutIcon />}
             onClick={async () => {
+              if (connectionDetails?.isConnected) {
+                await disconnectProxy();
+              }
               await selectServer(null);
               await logout();
             }}

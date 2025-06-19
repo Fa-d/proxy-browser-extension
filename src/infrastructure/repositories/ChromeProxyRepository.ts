@@ -61,7 +61,7 @@ export class ChromeProxyRepository implements ProxyRepository {
           resolve({ isActive: false });
           return;
         }
-        const isActive = details.value.mode === 'pac_script';
+        const isActive = details.value.mode === 'fixed_servers';
         resolve({ isActive: isActive });
       });
     });
