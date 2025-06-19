@@ -9,6 +9,7 @@ export interface UserDetails {
   packageName: string;
   validityDate: string;
   userType: number;
+  userStatus: number;
   fullName: string;
 }
 

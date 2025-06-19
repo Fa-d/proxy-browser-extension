@@ -19,6 +19,7 @@ import { useProxy } from '../hooks/useProxy';
 import { Server } from '../../domain/models/Server';
 import { useNavigate } from 'react-router-dom'
 import { pingServer } from '../utils/pingServer';
+import { useAuthContext } from '../contexts/AuthContext';
 
 export const ServerListPage: React.FC = () => {
   const {
@@ -31,17 +32,25 @@ export const ServerListPage: React.FC = () => {
   const navigate = useNavigate();
   const [pingError, setPingError] = useState<string | null>(null);
   const [isPinging, setIsPinging] = useState(false);
+  const { userDetails } = useAuthContext();
+  const [accountExpired, setAccountExpired] = useState(false);
+
   const handleServerSelect = async (server: Server) => {
-    setPingError(null);
-    setIsPinging(true);
-    const alive = await pingServer(server.url, "admin", "123456");
-    setIsPinging(false);
-    if (!alive) {
-      setPingError('Selected server is not reachable. Please choose another server.');
+    if (userDetails?.userStatus === 3) {
+      setAccountExpired(true);
       return;
+    } else {
+      setPingError(null);
+      setIsPinging(true);
+      const alive = await pingServer(server.url, "admin", "123456");
+      setIsPinging(false);
+      if (!alive) {
+        setPingError('Selected server is not reachable. Please choose another server.');
+        return;
+      }
+      await selectServer(server);
+      navigate('/home/dashboard', { state: { shouldConnect: 'true' } });
     }
-    await selectServer(server);
-    navigate('/home/dashboard', { state: { shouldConnect: 'true' } });
   };
 
   return (
@@ -151,6 +160,51 @@ export const ServerListPage: React.FC = () => {
                   </AlertDescription>
                 </Box>
                 <CloseButton alignSelf="flex-start" position="relative" right={-1} top={-1} onClick={() => setPingError(null)} />
+              </Alert>
+            </Box>
+          )}
+          {accountExpired && (
+            <Box
+              position="fixed"
+              top="50%"
+              left="50%"
+              sx={{
+                transform: 'translate(-50%, -50%)',
+                zIndex: 1400,
+                minWidth: 320,
+                boxShadow: 6,
+                borderRadius: 3,
+                bgcolor: 'background.paper',
+                p: 2,
+                display: 'flex',
+                alignItems: 'center',
+                paddingBlock: 30
+              }}
+            >
+              <Alert
+                status="error"
+                variant="solid"
+                sx={{
+                  bgcolor: 'error.main',
+                  color: 'common.white',
+                  borderRadius: 12,
+                  width: '80%',
+                  boxShadow: '6',
+                  p: 0,
+                  alignItems: 'center',
+                  background: 'linear-gradient(90deg, #ff1744 0%, #ff8a65 100%)',
+                }}
+              >
+                <AlertIcon sx={{ height: 50, width: 50, marginInline: 30 }} />
+                <Box flex="1">
+                  <AlertTitle mr={2} sx={{ fontSize: 20, fontWeight: 700 }}>
+                    Account Expired!
+                  </AlertTitle>
+                  <AlertDescription sx={{ fontSize: 16 }}>
+                    Your account is expired. Please renew your subscription to continue using the service.
+                  </AlertDescription>
+                </Box>
+                <CloseButton alignSelf="flex-start" position="relative" right={-1} top={-1} onClick={() => setAccountExpired(false)} />
               </Alert>
             </Box>
           )}

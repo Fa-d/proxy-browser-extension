@@ -33,6 +33,7 @@ export class LocalStorageAuthRepository implements AuthRepository {
           packageName: restDetails.packageName,
           validityDate: restDetails.validityDate,
           userType: restDetails.userType,
+          userStatus: restDetails.userStatus,
           fullName: restDetails.fullName,
         };
         localStorage.setItem(USER_DETAILS_STORAGE_KEY, JSON.stringify(userDetailsData));

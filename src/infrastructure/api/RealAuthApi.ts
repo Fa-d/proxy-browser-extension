@@ -30,7 +30,7 @@ export interface ApiLoginSuccessResponse {
   dedicated_server_status: number;
   show_banner: string;
   show_full_screen: string;
-  user_status: string;
+  user_status: number;
   account_id: number;
   fullname: string;
   is_social_login: number;
@@ -60,6 +60,7 @@ export interface RealAuthApiResponse {
   packageName: string;
   validityDate: string;
   userType: number;
+  userStatus: number;
   fullName: string;
 }
 
@@ -103,6 +104,7 @@ export class RealAuthApi {
           packageName: successData.package_name,
           validityDate: successData.validity_date,
           userType: successData.user_type,
+          userStatus: successData.user_status,
           fullName: successData.fullname,
         };
       } else {
