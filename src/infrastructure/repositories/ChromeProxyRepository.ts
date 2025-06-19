@@ -18,7 +18,6 @@ async function sendMessageWithRetry(message: any, retries = 1, delayMs = 300): P
             isReceivingEndError(chrome.runtime.lastError) &&
             remaining > 0
           ) {
-            // Retry after a short delay
             setTimeout(() => attempt(remaining - 1), delayMs);
             return;
           }
@@ -40,7 +39,11 @@ async function sendMessageWithRetry(message: any, retries = 1, delayMs = 300): P
 
 export class ChromeProxyRepository implements ProxyRepository {
   async connect(server: Server): Promise<void> {
-    await sendMessageWithRetry({ action: 'setProxy', url: server.url }, 1, 300);
+    await sendMessageWithRetry({ action: 'setProxy', url: server.url, username: "admin", password: "123456" }, 1, 300).catch((error) => {
+      this.disconnect();
+      console.error('Error connecting to proxy:', error);
+      throw error;
+    });
   }
 
   async disconnect(): Promise<void> {
@@ -58,8 +61,8 @@ export class ChromeProxyRepository implements ProxyRepository {
           resolve({ isActive: false });
           return;
         }
-        const isActive = details.value.mode !== 'direct';
-        resolve({ isActive });
+        const isActive = details.value.mode === 'pac_script';
+        resolve({ isActive: isActive });
       });
     });
   }

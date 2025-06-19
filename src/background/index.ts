@@ -1,11 +1,13 @@
 import { registerTabDataListeners } from './tabData';
 import { registerMessageHandler } from './messageHandler';
+import { startSpeedBroadcasting } from './speedBroadcaster';
 
 console.log('Background script loaded at', new Date().toISOString());
 
 
 registerTabDataListeners();
 registerMessageHandler();
+startSpeedBroadcasting();
 
 
 // Example PAC script pattern for documentation:

@@ -63,6 +63,7 @@ export function registerTabDataListeners() {
           tabData.lastDownloadTimestamp = details.timeStamp;
           await setTabData(details.tabId, tabData);
           console.log(`Tab ${details.tabId} downloaded ${contentLength} bytes. Total: ${tabData.totalBytesDownloaded}`);
+
         }
       } catch (e) {
         console.error("Error in onCompleted listener:", e);

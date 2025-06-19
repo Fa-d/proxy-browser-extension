@@ -1,6 +1,3 @@
-// src/background/proxy.ts
-import { showNotification } from './notifications';
-
 export async function setCurrentAuthCredentials(creds: { username?: string; password?: string; } | null) {
   if (creds) {
     await chrome.storage.local.set({ proxyAuthCredentials: creds });
@@ -18,53 +15,73 @@ export async function getCurrentAuthCredentials(): Promise<{ username?: string; 
 }
 
 export function setProxy(passedUrl: string) {
-    const config = {
-        mode: "pac_script",
-        pacScript: { url: passedUrl }
-    };
-    chrome.proxy.settings.set({ value: config, scope: "regular" }, () => {
-        if (chrome.runtime.lastError) {
-            console.error("Error setting PAC script:", chrome.runtime.lastError.message);
-            showNotification("Proxy Error", `Failed to set PAC script: ${chrome.runtime.lastError.message}`);
-            chrome.runtime.sendMessage({ type: "proxyError", message: `Failed to set PAC script: ${chrome.runtime.lastError.message}` });
-        } else {
-            console.log(`PAC script enabled from: ${passedUrl}`);
-            showNotification("Proxy Enabled", `Proxy set to: ${passedUrl}`);
-            chrome.runtime.sendMessage({ type: "proxySuccess", message: `Proxy enabled: ${passedUrl}` });
-        }
-    });
+
+  // const pacScriptConfig = {
+  //   mode: "pac_script",
+  //   pacScript: {
+  //     data: `
+  //     function FindProxyForURL(url, host) {
+  //       return "PROXY ${passedUrl}:443";
+  //     }
+  //   `
+  //   }
+  // };
+
+  const pacScriptConfig = {
+    mode: "fixed_servers",
+    rules: {
+      proxyForHttp: {
+        scheme: "https",
+        host: passedUrl,
+        port: 443
+      },
+      proxyForHttps: {
+        scheme: "https",
+        host: passedUrl,
+        port: 443
+      },
+      bypassList: ["foobar.com"]
+    }
+  }
+
+  chrome.proxy.settings.set({ value: pacScriptConfig, scope: "regular" }, () => {
+    if (chrome.runtime.lastError) {
+      console.error("Error setting PAC script:", chrome.runtime.lastError.message);
+      chrome.runtime.sendMessage({ type: "proxyError", message: `Failed to set PAC script: ${chrome.runtime.lastError.message}` });
+    } else {
+      console.log(`PAC script enabled from: ${passedUrl}`);
+      chrome.runtime.sendMessage({ type: "proxySuccess", message: `Proxy enabled: ${passedUrl}` });
+    }
+  });
 }
 
 export function clearProxy() {
-    chrome.proxy.settings.clear({ scope: "regular" }, () => {
-        if (chrome.runtime.lastError) {
-            console.error("Error clearing proxy:", chrome.runtime.lastError.message);
-            showNotification("Proxy Error", `Failed to clear proxy: ${chrome.runtime.lastError.message}`);
-            chrome.runtime.sendMessage({ type: "proxyError", message: `Failed to clear proxy: ${chrome.runtime.lastError.message}` });
-        } else {
-            console.log("Proxy cleared");
-            showNotification("Proxy Cleared", "Disconnected from proxy server");
-            chrome.runtime.sendMessage({ type: "proxySuccess", message: "Proxy cleared" });
-        }
-    });
+  chrome.proxy.settings.clear({ scope: "regular" }, () => {
+    if (chrome.runtime.lastError) {
+      console.error("Error clearing proxy:", chrome.runtime.lastError.message);
+      chrome.runtime.sendMessage({ type: "proxyError", message: `Failed to clear proxy: ${chrome.runtime.lastError.message}` });
+    } else {
+      console.log("Proxy cleared");
+      chrome.runtime.sendMessage({ type: "proxySuccess", message: "Proxy cleared" });
+    }
+  });
 }
 
 export const authRequiredListener = async function (details: chrome.webRequest.WebRequestDetails) {
-    try {
-        const creds = await getCurrentAuthCredentials();
-        if (creds && creds.username && creds.password) {
-            console.log("Using credentials for auth challenge:", creds.username);
-            //return { authCredentials: creds };
-        }
-        console.log("Authentication required, but no credentials available. URI: " + details.url);
-        return {};
-    } catch (e) {
-        console.error("Error in onAuthRequired listener:", e);
-        return { cancel: true };
+  try {
+    const creds = await getCurrentAuthCredentials();
+    if (creds && creds.username && creds.password) {
+      console.log("Using credentials for auth challenge:", creds.username);
+      return { authCredentials: creds };
     }
+    console.log("Authentication required, but no credentials available. URI: " + details.url);
+    return {};
+  } catch (e) {
+    console.error("Error in onAuthRequired listener:", e);
+    return { cancel: true };
+  }
 };
 
-// Use chrome.storage for persistent credentials in checkProxyFunctionality
 export async function checkProxyFunctionality(pacUrl: string, username?: string, password?: string) {
   const testUrl = 'https://www.google.com/generate_204';
   let originalAuthCredentials: { username?: string; password?: string; } | null = await getCurrentAuthCredentials();
@@ -98,9 +115,15 @@ export async function checkProxyFunctionality(pacUrl: string, username?: string,
     return true;
   } catch (error: any) {
     console.error("Proxy functionality test failed:", error.message);
-    showNotification("Proxy Test Failed", `Could not connect via proxy: ${error.message}. Check server and credentials.`);
-    chrome.runtime.sendMessage({ type: "proxyError", message: `Proxy test failed: ${error.message}. Check server and credentials.` });
-    return false;
+
+    let errorMessage = `Proxy test failed: ${error.message}.`;
+    if (error.message.includes('aborted')) {
+      errorMessage = 'Proxy test timed out. The proxy server may be unreachable or slow.';
+    } else {
+      errorMessage += ' Please check the PAC script URL, server status, and your credentials.';
+    }
+    chrome.runtime.sendMessage({ type: "proxyError", message: errorMessage }); return false;
+
   } finally {
     await setCurrentAuthCredentials(originalAuthCredentials);
     if (originalProxySettings) {

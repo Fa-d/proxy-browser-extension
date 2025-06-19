@@ -8,8 +8,8 @@ const proxyService = new ProxyService();
 export const useProxy = () => {
   const [connectionDetails, setConnectionDetails] = useState<ConnectionDetails | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [hookError, setHookError] = useState<string | null>(null); 
-  const [proxyError, setProxyError] = useState<string | null>(null); 
+  const [hookError, setHookError] = useState<string | null>(null);
+  const [proxyError, setProxyError] = useState<string | null>(null);
 
   const fetchConnectionDetails = useCallback(async () => {
     setHookError(null);
@@ -29,7 +29,6 @@ export const useProxy = () => {
     return () => clearInterval(intervalId);
   }, [fetchConnectionDetails]);
 
-  // Listener for messages from background script
   useEffect(() => {
     const messageListener = (
       request: any,
@@ -40,15 +39,13 @@ export const useProxy = () => {
         setProxyError(request.message);
         setHookError(null);
       } else if (request.type === "proxySuccess") {
-        setProxyError(null); 
+        setProxyError(null);
       }
-      return undefined; 
+      return undefined;
     };
 
-
-    //return () => { };
-     chrome.runtime.onMessage.addListener(messageListener);
-     return () => { chrome.runtime.onMessage.removeListener(messageListener); };
+    chrome.runtime.onMessage.addListener(messageListener);
+    return () => { chrome.runtime.onMessage.removeListener(messageListener); };
 
   }, []);
 
@@ -57,9 +54,10 @@ export const useProxy = () => {
   };
 
   const connect = useCallback(async (server: Server) => {
+    console.log("Connecting to proxy server:", server);
     setIsLoading(true);
-    setHookError(null); // Use renamed setter
-    setProxyError(null); // Clear background error on new action
+    setHookError(null);
+    setProxyError(null);
     try {
       await proxyService.connect(server);
       await fetchConnectionDetails();

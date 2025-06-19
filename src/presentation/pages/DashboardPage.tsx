@@ -40,7 +40,7 @@ const DashboardPage: React.FC = () => {
     selectedServer,
     fetchSelectedServer,
   } = useServers();
-  const { speedInfo, isLoading: isLoadingSpeed } = useSpeedometer();
+  const { speedInfo, isLoadingSpeed } = useSpeedometer();
 
   const [isProcessingProxyAction, setIsProcessingProxyAction] = useState(false);
 
@@ -71,7 +71,6 @@ const DashboardPage: React.FC = () => {
     setTimeout(() => setIsProcessingProxyAction(false), 1200);
   };
 
-  const defaultImageUrl = "img/thunder.svg";
   const displayServerName = selectedServer?.city || selectedServer?.country || "Select a server";
   const displayServerUrl = selectedServer?.url || "No server selected";
 
@@ -136,7 +135,6 @@ const DashboardPage: React.FC = () => {
               </MuiBox>
             ) : (
               <Avatar
-                src={defaultImageUrl}
                 alt={displayServerName}
                 sx={{
                   width: 100,

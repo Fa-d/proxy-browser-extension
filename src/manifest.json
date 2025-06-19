@@ -23,9 +23,7 @@
         "proxy",
         "storage",
         "webRequest",
-        "webRequestAuthProvider",
-        "notifications"
-
+        "webRequestAuthProvider"
     ],
     "host_permissions": [
         "<all_urls>"
