@@ -52,6 +52,10 @@ export class LocalStorageAuthRepository implements AuthRepository {
 
   async logout(): Promise<void> {
     this.clearAllAuthData();
+    // Remove proxy authentication data on logout
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.storage && chrome.storage.local) {
+      await chrome.storage.local.remove('proxyAuthCredentials');
+    }
   }
 
   async getCurrentUser(): Promise<User | null> {

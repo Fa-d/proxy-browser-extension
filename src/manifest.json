@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
-    "name": "Secure HTTPS Proxy Connector",
+    "name": "IPLock Chrome Extension",
     "version": "0.1.0",
-    "description": "Connects securely to your remote HTTPS proxy server.",
+    "description": "Connects securely to your remote VPN proxy server.",
     "action": {
         "default_popup": "index.html",
         "default_title": "Proxy Settings",

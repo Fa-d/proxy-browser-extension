@@ -14,6 +14,8 @@ export interface IpBundleItem {
   ip: string;
   country_name: string;
   ip_id: number;
+  country_code: string;
+  city: string;
 }
 
 // Define the structure for the successful API response

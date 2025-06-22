@@ -69,7 +69,7 @@ const LoginPage: React.FC = () => {
               <Input
                 name="email"
                 type="email"
-                placeholder="you@email.com"
+                placeholder="Email"
                 value={inputUsername}
                 onChange={handleUsernameChange}
                 disabled={isLoading}

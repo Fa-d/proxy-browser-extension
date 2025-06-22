@@ -13,14 +13,14 @@ import {
 } from '@mui/material';
 import { Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton, Box } from '@chakra-ui/react';
 import { CloudUploadOutlined, CloudDownloadRounded, ArrowForwardIos } from '@mui/icons-material';
-import Toolbar from '@mui/material/Toolbar';
-import Lottie from "lottie-react";
-import animationPassedData from "../assets/connecting.json";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSpeedometer } from '../hooks/useSpeedometer';
 import { useProxy } from '../hooks/useProxy';
 import { useServers } from '../hooks/useServers';
-import thunderLogo from '../assets/rocket.png';
+import titleLogo from '../assets/title_logo.png';
+import connectedImg from '../assets/connected.png';
+import connectingImg from '../assets/connecting.png';
+import disconnectedImg from '../assets/disconnected.png';
 
 
 const DashboardPage: React.FC = () => {
@@ -42,6 +42,7 @@ const DashboardPage: React.FC = () => {
     fetchSelectedServer,
   } = useServers();
   const { speedInfo, isLoadingSpeed } = useSpeedometer();
+  const [actionInProgress, setActionInProgress] = React.useState(false);
 
   useEffect(() => {
     const shouldConnectOtherPage = location.state?.shouldConnect === 'true';
@@ -56,17 +57,25 @@ const DashboardPage: React.FC = () => {
   }, [fetchSelectedServer]);
 
   const handleConnectDisconnect = async () => {
+    if (actionInProgress) return; // Prevent double actions
+    setActionInProgress(true);
     if (!selectedServer && !connectionDetails?.isConnected) {
       alert("Please select a server from the server list first.");
+      setActionInProgress(false);
       return;
     }
-    // No local UI state, just call the hook
     if (connectionDetails?.isConnected) {
       await disconnectProxy();
+      await refreshConnectionDetails();
+      setActionInProgress(false);
+      return;
     } else if (selectedServer) {
       await connectProxy(selectedServer);
+      await refreshConnectionDetails();
+      setActionInProgress(false);
+      return;
     }
-    await refreshConnectionDetails();
+    setActionInProgress(false);
   };
 
   const displayServerName = selectedServer?.city || selectedServer?.country || "Select a server";
@@ -103,13 +112,11 @@ const DashboardPage: React.FC = () => {
         overflow: 'hidden',
         bgcolor: theme.palette.background.paper,
       }}>
-        <Toolbar sx={{ px: 3, py: 2, bgcolor: theme.palette.background.paper }}>
-          <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center', fontWeight: 700, letterSpacing: 1 }}>
-            Dashboard
-          </Typography>
-        </Toolbar>
-        <Divider />
-        <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', px: 4, py: 3 }}>
+
+        <MuiBox sx={{ display: 'flex', alignItems: 'flex-start', mb: 1 }}>
+          <img src={titleLogo} alt="Logo" style={{ width: 148, height: 48, objectFit: 'contain', marginLeft: 12, marginTop: 12 }} />
+        </MuiBox>
+        <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', px: 4, py: 3, pt: 1 }}>
 
           <Typography
             variant="subtitle1"
@@ -126,30 +133,19 @@ const DashboardPage: React.FC = () => {
           </Typography>
 
 
-          <MuiBox sx={{ my: 2 }}>
-            {isConnecting ? (
-              <MuiBox sx={{ width: 120, height: 120 }}>
-                <Lottie animationData={animationPassedData} loop={true} />
+          <MuiBox >
+            {isConnecting || actionInProgress ? (
+              <MuiBox sx={{ width: 180, height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <img src={connectingImg} alt="Connecting" style={{ width: 180, height: 180, objectFit: 'contain', paddingBlock: 4 }} />
+              </MuiBox>
+            ) : connectionDetails.isConnected ? (
+              <MuiBox sx={{ width: 180, height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <img src={connectedImg} alt="Connected" style={{ width: 180, height: 180, objectFit: 'contain', paddingBlock: 4, cursor: actionInProgress ? 'not-allowed' : 'pointer', opacity: actionInProgress ? 0.5 : 1 }} onClick={handleConnectDisconnect} />
               </MuiBox>
             ) : (
-              <Avatar
-                alt={displayServerName}
-                src={thunderLogo}
-                sx={{
-                  width: 100,
-                  height: 100,
-                  bgcolor: connectionDetails.isConnected ? theme.palette.success.light : theme.palette.error.light,
-                  border: `3px solid ${connectionDetails.isConnected ? theme.palette.success.main : theme.palette.error.main}`,
-                  boxShadow: 3,
-                  cursor: 'pointer',
-                  transition: 'box-shadow 0.2s',
-                  '&:hover': { boxShadow: 8 },
-                  padding: 2,
-                  objectFit: 'contain',
-                }}
-                imgProps={{ style: { padding: 20, objectFit: 'contain' } }}
-                onClick={handleConnectDisconnect}
-              />
+              <MuiBox sx={{ width: 180, height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <img src={disconnectedImg} alt="Disconnected" style={{ width: 180, height: 180, objectFit: 'contain', paddingBlock: 4, cursor: actionInProgress ? 'not-allowed' : 'pointer', opacity: actionInProgress ? 0.5 : 1 }} onClick={handleConnectDisconnect} />
+              </MuiBox>
             )}
           </MuiBox>
 

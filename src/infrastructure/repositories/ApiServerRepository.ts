@@ -25,7 +25,8 @@ export class ApiServerRepository implements ServerRepository {
         id: item.ip_id.toString(),
         url: item.ip,
         country: item.country_name,
-        city: '',
+        city: item.city,
+        countryCode: item.country_code
       }));
       return servers;
     } catch (error) {

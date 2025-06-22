@@ -3,4 +3,5 @@ export interface Server {
   url: string;
   country: string;
   city: string;
+  countryCode: string;
 }

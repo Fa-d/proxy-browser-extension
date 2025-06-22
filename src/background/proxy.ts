@@ -67,20 +67,23 @@ export function clearProxy() {
   });
 }
 
-export const authRequiredListener = async function (details: chrome.webRequest.WebRequestDetails) {
-  try {
-    const creds = await getCurrentAuthCredentials();
+export function authRequiredListener(
+  details: chrome.webRequest.WebAuthenticationChallengeDetails,
+  callback?: (response: chrome.webRequest.BlockingResponse) => void
+) {
+  getCurrentAuthCredentials().then((creds) => {
     if (creds && creds.username && creds.password) {
       console.log("Using credentials for auth challenge:", creds.username);
-      return { authCredentials: creds };
+      if (callback) callback({ authCredentials: { username: creds.username, password: creds.password } });
+    } else {
+      console.log("Authentication required, but no credentials available. Cancelling request to prevent popup. URI: " + details.url);
+      if (callback) callback({ cancel: true });
     }
-    console.log("Authentication required, but no credentials available. URI: " + details.url);
-    return {};
-  } catch (e) {
+  }).catch((e) => {
     console.error("Error in onAuthRequired listener:", e);
-    return { cancel: true };
-  }
-};
+    if (callback) callback({ cancel: true });
+  });
+}
 
 export async function checkProxyFunctionality(pacUrl: string, username?: string, password?: string) {
   const testUrl = 'https://www.google.com/generate_204';
@@ -140,4 +143,10 @@ export async function checkProxyFunctionality(pacUrl: string, username?: string,
       });
     }
   }
+}
+
+export async function setProxyWithAuth(passedUrl: string, username?: string, password?: string) {
+  // Always set credentials before enabling proxy
+  await setCurrentAuthCredentials({ username, password });
+  setProxy(passedUrl);
 }

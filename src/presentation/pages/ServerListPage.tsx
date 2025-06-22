@@ -20,6 +20,7 @@ import { Server } from '../../domain/models/Server';
 import { useNavigate } from 'react-router-dom'
 import { pingServer } from '../utils/pingServer';
 import { useAuthContext } from '../contexts/AuthContext';
+import { getFlagImage } from '../utils/countryFlag';
 
 export const ServerListPage: React.FC = () => {
   const {
@@ -28,7 +29,7 @@ export const ServerListPage: React.FC = () => {
     selectServer,
     serverError,
   } = useServers();
-  const { proxyError, clearProxyError } = useProxy();
+  const { proxyError, clearProxyError, connectionDetails } = useProxy();
   const navigate = useNavigate();
   const [pingError, setPingError] = useState<string | null>(null);
   const [isPinging, setIsPinging] = useState(false);
@@ -39,18 +40,22 @@ export const ServerListPage: React.FC = () => {
     if (userDetails?.userStatus == 3) {
       setAccountExpired(true);
       return;
-    } else {
-      setPingError(null);
-      setIsPinging(true);
-      const alive = await pingServer(server.url, "admin", "123456");
-      setIsPinging(false);
-      if (!alive) {
-        setPingError('Selected server is not reachable. Please choose another server.');
-        return;
-      }
-      await selectServer(server);
-      navigate('/home/dashboard', { state: { shouldConnect: 'true' } });
     }
+    // Check if already connected to this server
+    if (connectionDetails?.isConnected && connectionDetails?.selectedServerUrl === server.url) {
+      navigate('/home/dashboard');
+      return;
+    }
+    setPingError(null);
+    setIsPinging(true);
+    const alive = await pingServer(server.url, "admin", "123456");
+    setIsPinging(false);
+    if (!alive) {
+      setPingError('Selected server is not reachable. Please choose another server.');
+      return;
+    }
+    await selectServer(server);
+    navigate('/home/dashboard', { state: { shouldConnect: 'true' } });
   };
 
   return (
@@ -245,6 +250,7 @@ export const ServerListPage: React.FC = () => {
                   >
                     <ListItemAvatar>
                       <Avatar
+                        src={getFlagImage(server.countryCode)}
                         sx={{
                           width: 48,
                           height: 48,
@@ -254,7 +260,8 @@ export const ServerListPage: React.FC = () => {
                           fontSize: 22,
                         }}
                       >
-                        {server.country?.[0] || 'S'}
+                        {/* fallback: first letter if no flag */}
+                        {(!server.countryCode || getFlagImage(server.countryCode) === getFlagImage()) && (server.country?.[0] || 'S')}
                       </Avatar>
                     </ListItemAvatar>
                     <ListItemText
