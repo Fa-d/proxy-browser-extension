@@ -121,14 +121,18 @@ const DashboardPage: React.FC = () => {
           <Typography
             variant="subtitle1"
             sx={{
-              color: connectionDetails.isConnected ? theme.palette.success.main : theme.palette.error.main,
+              color: isConnecting
+                ? (connectionDetails.isConnected ? theme.palette.success.main : theme.palette.error.main)
+                : (connectionDetails.isConnected ? theme.palette.success.main : theme.palette.error.main),
               fontWeight: 600,
               mb: 1,
               letterSpacing: 1,
             }}
           >
             {isConnecting
-              ? (connectionDetails.isConnected ? 'Disconnecting...' : 'Connecting...')
+              ? (connectionDetails.isConnected
+                ? <span style={{ color: theme.palette.success.main }}>Disconnecting...</span>
+                : <span style={{ color: theme.palette.error.main }}>Connecting...</span>)
               : (connectionDetails.isConnected ? 'Connected' : 'Disconnected')}
           </Typography>
 
@@ -157,7 +161,7 @@ const DashboardPage: React.FC = () => {
           </Typography>
 
           {/* Speedometer */}
-          <MuiBox
+          {/* <MuiBox
             sx={{
               display: 'flex',
               justifyContent: 'space-between',
@@ -213,7 +217,23 @@ const DashboardPage: React.FC = () => {
                     : '0 B/s'}
               </Typography>
             </MuiBox>
+          </MuiBox> */}
+
+          <MuiBox sx={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            borderRadius: 2,
+            mb: 4,
+            bgcolor: connectionDetails.isConnected ? '#C9EFE6' : '#F2C8C8',
+            textAlign: 'center',
+          }}>
+            <Typography variant="subtitle2" sx={{ py: 1, fontWeight: 600, color: connectionDetails.isConnected ? '#116447B2' : '#B41313B2' }}>
+              Security status: {connectionDetails.isConnected ? 'Safe' : 'Unsafe'}
+            </Typography>
           </MuiBox>
+
           {proxyError && (
             <Alert status="error" mt={4} variant="solid" style={{ width: '100%', marginTop: '16px', marginBottom: '16px' }}>
               <AlertIcon />

@@ -56,7 +56,7 @@ const ProfilePage: React.FC = () => {
       >
         <CardContent sx={{ p: { xs: 2, sm: 3 }, textAlign: 'center' }}>
           <Avatar sx={{ width: 80, height: 80, margin: '0 auto 16px', bgcolor: 'primary.main' }}>
-            <AccountCircleIcon sx={{ fontSize: 60 }} />
+            <AccountCircleIcon sx={{ fontSize: 60,}} />
           </Avatar>
           <Typography variant="h5" component="div" gutterBottom sx={{ fontWeight: 'bold' }}>
             {displayName}
@@ -66,9 +66,9 @@ const ProfilePage: React.FC = () => {
             <Typography variant="subtitle1" gutterBottom>
               <strong>Email:</strong> {currentUser.email}
             </Typography>
-            <Typography variant="subtitle1" gutterBottom>
+            {/* <Typography variant="subtitle1" gutterBottom>
               <strong>Account ID:</strong> {currentUser.id}
-            </Typography>
+            </Typography> */}
             <Typography variant="subtitle1" gutterBottom>
               <strong>Package:</strong> {displayPackage}
             </Typography>
@@ -79,7 +79,6 @@ const ProfilePage: React.FC = () => {
           <Divider sx={{ my: 2 }} />
           <Button
             variant="contained"
-            color="primary"
             startIcon={<LogoutIcon />}
             onClick={async () => {
               if (connectionDetails?.isConnected) {
@@ -89,7 +88,7 @@ const ProfilePage: React.FC = () => {
               await logout();
             }}
             fullWidth
-            sx={{ mt: 2, py: 1.5, borderRadius: 2, fontWeight: 'bold' }}
+            sx={{ mt: 2, py: 1.5, borderRadius: 2, fontWeight: 'bold', background: '#7149DD', color: '#fff', '&:hover': { background: '#5a36b6' } }}
           >
             Logout
           </Button>

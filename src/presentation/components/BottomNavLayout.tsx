@@ -46,6 +46,11 @@ const BottomNavLayout: React.FC = () => {
         showLabels
         value={value}
         onChange={handleChange}
+        sx={{
+          '& .Mui-selected, & .Mui-selected svg': {
+            color: '#7149DD',
+          },
+        }}
       >
         <BottomNavigationAction
           label="Dashboard"

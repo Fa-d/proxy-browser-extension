@@ -11,10 +11,14 @@ import { Typography as MuiTypography } from '@mui/material';
 import { useAuth } from '../hooks/useAuth';
 import { AuthCredentials } from '../../domain/repositories/AuthRepository';
 import { useAuthContext } from '../contexts/AuthContext';
+import thunderImg from '../assets/thunder.png';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import IconButton from '@mui/joy/IconButton';
 
 const LoginPage: React.FC = () => {
   const [inputUsername, setUsername] = React.useState('');
   const [inputPassword, setPassword] = React.useState('');
+  const [showPassword, setShowPassword] = React.useState(false);
   const { login, isLoading, authError, currentUser } = useAuthContext();
 
   const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,15 +60,16 @@ const LoginPage: React.FC = () => {
           }}
           variant="outlined"
         >
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 2, borderRadius: 4 }}>
+            <img src={thunderImg} alt="Thunder Logo" style={{ width: 120, height: 120, objectFit: 'contain', margin: '0 auto 8px auto', display: 'block', borderRadius: 8 }} />
             <Typography level="h3" component="h1" sx={{ fontWeight: 700, textAlign: 'center', mb: 1 }}>
               Sign in to your account
             </Typography>
             <Typography level="body-sm" sx={{ color: 'text.secondary', textAlign: 'center', mb: 2 }}>
               Welcome back! Please enter your details.
             </Typography>
-            <Divider sx={{ mb: 2 }} />
-            <FormControl required>
+            <Divider sx={{ mb: 2, borderRadius: 4 }} />
+            <FormControl required sx={{ borderRadius: 4 }}>
               <FormLabel>Email</FormLabel>
               <Input
                 name="email"
@@ -74,21 +79,33 @@ const LoginPage: React.FC = () => {
                 onChange={handleUsernameChange}
                 disabled={isLoading}
                 size="lg"
-                sx={{ borderRadius: 'md' }}
+                sx={{ borderRadius: 4 }}
                 autoFocus
               />
             </FormControl>
-            <FormControl required>
+            <FormControl required sx={{ borderRadius: 4 }}>
               <FormLabel>Password</FormLabel>
               <Input
                 name="password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 placeholder="Password"
                 value={inputPassword}
                 onChange={handlePasswordChange}
                 disabled={isLoading}
                 size="lg"
-                sx={{ borderRadius: 'md' }}
+                sx={{ borderRadius: 4 }}
+                endDecorator={
+                  <IconButton
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    onClick={() => setShowPassword((show) => !show)}
+                    variant="plain"
+                    color="neutral"
+                    size="sm"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                }
               />
             </FormControl>
             {authError && (
@@ -99,11 +116,14 @@ const LoginPage: React.FC = () => {
             <Button
               sx={{
                 mt: 2,
-                borderRadius: 'md',
+                borderRadius: 4,
                 fontWeight: 600,
                 fontSize: 16,
                 py: 1.5,
                 boxShadow: 'sm',
+                background: '#7149DD',
+                color: '#fff',
+                '&:hover': { background: '#5a36b6' },
               }}
               type="submit"
               disabled={isLoading}
@@ -113,16 +133,21 @@ const LoginPage: React.FC = () => {
             >
               {isLoading ? 'Logging in...' : 'Log In'}
             </Button>
-            <Divider sx={{ my: 2 }} />
-            {/* <Typography
+            <Divider sx={{ my: 2, borderRadius: 4 }} />
+            <Typography
               fontSize={14}
               sx={{ textAlign: 'center', color: 'text.secondary' }}
             >
               Don&apos;t have an account?{' '}
-              <a href="#" style={{ color: '#1976d2', textDecoration: 'none', fontWeight: 500 }}>
+              <a
+                href="https://iplockvpn.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: '#1976d2', textDecoration: 'none', fontWeight: 500, borderRadius: 4 }}
+              >
                 Sign up
               </a>
-            </Typography> */}
+            </Typography>
           </form>
         </Sheet>
       </main>

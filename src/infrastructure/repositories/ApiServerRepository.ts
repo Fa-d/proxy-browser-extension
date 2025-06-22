@@ -21,6 +21,7 @@ export class ApiServerRepository implements ServerRepository {
         return [];
       }
 
+      chrome.enterprise
       const servers: Server[] = ipBundle.map(item => ({
         id: item.ip_id.toString(),
         url: item.ip,
