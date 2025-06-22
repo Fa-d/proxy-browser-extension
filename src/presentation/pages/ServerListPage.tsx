@@ -36,7 +36,7 @@ export const ServerListPage: React.FC = () => {
   const [accountExpired, setAccountExpired] = useState(false);
 
   const handleServerSelect = async (server: Server) => {
-    if (userDetails?.userStatus === 3) {
+    if (userDetails?.userStatus == 3) {
       setAccountExpired(true);
       return;
     } else {
@@ -60,7 +60,6 @@ export const ServerListPage: React.FC = () => {
         justifyContent: 'center',
         alignItems: 'flex-start',
         minHeight: '100%',
-        boxSizing: 'border-box',
       }}
     >
       <Sheet
@@ -72,7 +71,6 @@ export const ServerListPage: React.FC = () => {
           display: 'flex',
           flexDirection: 'column',
         }}
-        variant="outlined"
       >
         <Toolbar
           sx={{
@@ -102,7 +100,7 @@ export const ServerListPage: React.FC = () => {
           </Typography>
         </Toolbar>
         <Divider />
-        <Box sx={{ px: 3, py: 2, flex: 1, minHeight: 350, maxHeight: 500, overflowY: 'auto' }}>
+        <Box sx={{ px: 3, flex: 1, minHeight: 350, maxHeight: 500, overflowY: 'auto' }}>
 
           {proxyError && (
             <Alert status="error" mt={2} mb={2} variant="solid">
@@ -146,11 +144,9 @@ export const ServerListPage: React.FC = () => {
                   p: 0,
                   alignItems: 'center',
                   background: 'linear-gradient(90deg, #ff1744 0%, #ff8a65 100%)',
-
                 }}
               >
                 <AlertIcon sx={{ height: 50, width: 50, marginInline: 30 }} />
-
                 <Box flex="1">
                   <AlertTitle mr={2} sx={{ fontSize: 20, fontWeight: 700 }}>
                     Server Unreachable!
@@ -165,46 +161,49 @@ export const ServerListPage: React.FC = () => {
           )}
           {accountExpired && (
             <Box
-              position="fixed"
-              top="50%"
-              left="50%"
               sx={{
-                transform: 'translate(-50%, -50%)',
-                zIndex: 1400,
-                minWidth: 320,
-                boxShadow: 6,
-                borderRadius: 3,
-                bgcolor: 'background.paper',
-                p: 2,
-                display: 'flex',
-                alignItems: 'center',
-                paddingBlock: 30
+              position: 'fixed',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              zIndex: 1400,
+              minWidth: 320,
+              boxShadow: 6,
+              borderRadius: 3,
+              bgcolor: 'background.paper',
+              p: 2,
+              display: 'flex',
+              alignItems: 'center',
+              paddingBlock: 3,
+              width: '90%',
+              maxWidth: 400,
               }}
             >
               <Alert
-                status="error"
-                variant="solid"
-                sx={{
-                  bgcolor: 'error.main',
-                  color: 'common.white',
-                  borderRadius: 12,
-                  width: '80%',
-                  boxShadow: '6',
-                  p: 0,
-                  alignItems: 'center',
-                  background: 'linear-gradient(90deg, #ff1744 0%, #ff8a65 100%)',
-                }}
+              status="error"
+              variant="solid"
+              sx={{
+                bgcolor: 'error.main',
+                color: 'common.white',
+                borderRadius: 2,
+                width: '100%',
+                boxShadow: 6,
+                p: 0,
+                alignItems: 'center',
+                background: 'linear-gradient(90deg, #ff1744 0%, #ff8a65 100%)',
+                display: 'flex',
+              }}
               >
-                <AlertIcon sx={{ height: 50, width: 50, marginInline: 30 }} />
-                <Box flex="1">
-                  <AlertTitle mr={2} sx={{ fontSize: 20, fontWeight: 700 }}>
-                    Account Expired!
-                  </AlertTitle>
-                  <AlertDescription sx={{ fontSize: 16 }}>
-                    Your account is expired. Please renew your subscription to continue using the service.
-                  </AlertDescription>
-                </Box>
-                <CloseButton alignSelf="flex-start" position="relative" right={-1} top={-1} onClick={() => setAccountExpired(false)} />
+              <AlertIcon sx={{ height: 50, width: 50, mx: 2 }} />
+              <Box flex="1" sx={{ alignItems: 'center', mx: 2 }}>
+                <AlertTitle sx={{ fontSize: 20, fontWeight: 700 }}>
+                Account Expired!
+                </AlertTitle>
+                <AlertDescription sx={{ fontSize: 16 }}>
+                Your account is expired. Please renew your subscription to continue using the service.
+                </AlertDescription>
+              </Box>
+              <CloseButton alignSelf="flex-start" position="relative" right={-1} top={-1} onClick={() => setAccountExpired(false)} />
               </Alert>
             </Box>
           )}
@@ -225,11 +224,9 @@ export const ServerListPage: React.FC = () => {
               {servers.map((server) => (
                 <Card
                   key={server.id}
-                  variant="outlined"
                   sx={{
                     mb: 2,
                     borderRadius: 2,
-                    boxShadow: 'sm',
                     transition: 'box-shadow 0.2s, border-color 0.2s',
                     cursor: 'pointer',
                     '&:hover': {

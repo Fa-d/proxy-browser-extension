@@ -13,8 +13,8 @@ import { AuthCredentials } from '../../domain/repositories/AuthRepository';
 import { useAuthContext } from '../contexts/AuthContext';
 
 const LoginPage: React.FC = () => {
-  const [inputUsername, setUsername] = React.useState('yakeki8173@f5url.com');
-  const [inputPassword, setPassword] = React.useState('123456');
+  const [inputUsername, setUsername] = React.useState('');
+  const [inputPassword, setPassword] = React.useState('');
   const { login, isLoading, authError, currentUser } = useAuthContext();
 
   const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -114,7 +114,7 @@ const LoginPage: React.FC = () => {
               {isLoading ? 'Logging in...' : 'Log In'}
             </Button>
             <Divider sx={{ my: 2 }} />
-            <Typography
+            {/* <Typography
               fontSize={14}
               sx={{ textAlign: 'center', color: 'text.secondary' }}
             >
@@ -122,7 +122,7 @@ const LoginPage: React.FC = () => {
               <a href="#" style={{ color: '#1976d2', textDecoration: 'none', fontWeight: 500 }}>
                 Sign up
               </a>
-            </Typography>
+            </Typography> */}
           </form>
         </Sheet>
       </main>
