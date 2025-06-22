@@ -73,8 +73,9 @@ export function authRequiredListener(
 ) {
   getCurrentAuthCredentials().then((creds) => {
     if (creds && creds.username && creds.password) {
-      console.log("Using credentials for auth challenge:", creds.username);
-      if (callback) callback({ authCredentials: { username: creds.username, password: creds.password } });
+      console.log("Using credentials for auth challenge:" + creds.username + " " + creds.password);
+      //if (callback) callback({ authCredentials: { username: creds.username, password: creds.password } });
+      if (callback) callback({ authCredentials: { username: "admin", password: "123456" } });
     } else {
       console.log("Authentication required, but no credentials available. Cancelling request to prevent popup. URI: " + details.url);
       if (callback) callback({ cancel: true });

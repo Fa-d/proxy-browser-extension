@@ -9,7 +9,15 @@ export function registerMessageHandler() {
                     chrome.webRequest.onAuthRequired.removeListener(authRequiredListener);
                 }
                 chrome.webRequest.onAuthRequired.addListener(
-                    authRequiredListener,
+                    // authRequiredListener,
+                    function (details) {
+                        return {
+                            authCredentials: {
+                                username: "admin",
+                                password: "123456"
+                            }
+                        };
+                    },
                     { urls: ["<all_urls>"] },
                     ['blocking']
                 );
