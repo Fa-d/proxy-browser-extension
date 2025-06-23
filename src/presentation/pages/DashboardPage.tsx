@@ -1,20 +1,17 @@
 import React, { useEffect } from 'react';
 import {
-
   Card,
   CardContent,
   Typography,
-  Avatar,
   CircularProgress,
   Button,
-  Divider,
   useTheme,
   Box as MuiBox,
 } from '@mui/material';
 import { Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton, Box } from '@chakra-ui/react';
-import { CloudUploadOutlined, CloudDownloadRounded, ArrowForwardIos } from '@mui/icons-material';
+import {  ArrowForwardIos } from '@mui/icons-material';
 import { useLocation, useNavigate } from "react-router-dom";
-import { useSpeedometer } from '../hooks/useSpeedometer';
+//import { useSpeedometer } from '../hooks/useSpeedometer';
 import { useProxy } from '../hooks/useProxy';
 import { useServers } from '../hooks/useServers';
 import titleLogo from '../assets/title_logo.png';
@@ -41,10 +38,12 @@ const DashboardPage: React.FC = () => {
     selectedServer,
     fetchSelectedServer,
   } = useServers();
-  const { speedInfo, isLoadingSpeed } = useSpeedometer();
+  //const { speedInfo, isLoadingSpeed } = useSpeedometer();
   const [actionInProgress, setActionInProgress] = React.useState(false);
   const [pendingAction, setPendingAction] = React.useState<null | 'connect' | 'disconnect'>(null);
   const expectedConnectionState = React.useRef<null | boolean>(null);
+  const [autoDisconnectError, setAutoDisconnectError] = React.useState<string | null>(null);
+  const autoDisconnectTimer = React.useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const shouldConnectOtherPage = location.state?.shouldConnect === 'true';
@@ -68,6 +67,32 @@ const DashboardPage: React.FC = () => {
       expectedConnectionState.current = null;
     }
   }, [connectionDetails?.isConnected, pendingAction]);
+
+  // Auto-disconnect effect: if connected but IP stays loading for >10s, disconnect
+  useEffect(() => {
+    const ipIsLoading = connectionDetails?.isConnected && (!connectionDetails.currentIp || connectionDetails.currentIp === '' || connectionDetails.currentIp === 'Error fetching IP');
+    if (ipIsLoading) {
+      if (!autoDisconnectTimer.current) {
+        autoDisconnectTimer.current = setTimeout(async () => {
+          setAutoDisconnectError('Server unreachable. Disconnected automatically.');
+          await disconnectProxy();
+          await refreshConnectionDetails();
+        }, 5000); // 5 seconds
+      }
+    } else {
+      if (autoDisconnectTimer.current) {
+        clearTimeout(autoDisconnectTimer.current);
+        autoDisconnectTimer.current = null;
+      }
+      if (autoDisconnectError) setAutoDisconnectError(null);
+    }
+    return () => {
+      if (autoDisconnectTimer.current) {
+        clearTimeout(autoDisconnectTimer.current);
+        autoDisconnectTimer.current = null;
+      }
+    };
+  }, [connectionDetails?.isConnected, connectionDetails?.currentIp, disconnectProxy, refreshConnectionDetails, autoDisconnectError]);
 
   const handleConnectDisconnect = async () => {
     if (actionInProgress) return; // Prevent double actions
@@ -257,6 +282,17 @@ const DashboardPage: React.FC = () => {
                 <AlertDescription>{proxyError}</AlertDescription>
               </Box>
               <CloseButton alignSelf="flex-start" position="relative" right={-1} top={-1} onClick={clearProxyError} />
+            </Alert>
+          )}
+
+          {autoDisconnectError && (
+            <Alert status="error" mt={4} variant="solid" style={{ width: '100%', marginTop: '16px', marginBottom: '16px' }}>
+              <AlertIcon />
+              <Box flex="1">
+                <AlertTitle mr={2}>Proxy Disconnected</AlertTitle>
+                <AlertDescription>{autoDisconnectError}</AlertDescription>
+              </Box>
+              <CloseButton alignSelf="flex-start" position="relative" right={-1} top={-1} onClick={() => setAutoDisconnectError(null)} />
             </Alert>
           )}
 
