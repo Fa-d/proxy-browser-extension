@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Server } from '../../domain/models/Server';
 import { ConnectionDetails } from '../../domain/models/ConnectionDetails';
 import { ProxyService } from '../../application/services/ProxyService';
+import { delay } from 'framer-motion';
 
 const proxyService = new ProxyService();
 
@@ -62,7 +63,7 @@ export const useProxy = () => {
       await proxyService.connect(server);
       await fetchConnectionDetails();
     } catch (err: any) {
-      setHookError(err.message || 'Failed to connect to proxy'); // Use renamed setter
+      setHookError(err.message || 'Failed to connect to proxy');
       await fetchConnectionDetails();
     } finally {
       setIsLoading(false);

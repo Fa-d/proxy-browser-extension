@@ -43,6 +43,8 @@ const DashboardPage: React.FC = () => {
   } = useServers();
   const { speedInfo, isLoadingSpeed } = useSpeedometer();
   const [actionInProgress, setActionInProgress] = React.useState(false);
+  const [pendingAction, setPendingAction] = React.useState<null | 'connect' | 'disconnect'>(null);
+  const expectedConnectionState = React.useRef<null | boolean>(null);
 
   useEffect(() => {
     const shouldConnectOtherPage = location.state?.shouldConnect === 'true';
@@ -56,26 +58,39 @@ const DashboardPage: React.FC = () => {
     fetchSelectedServer();
   }, [fetchSelectedServer]);
 
+  // Effect to clear pendingAction only when the expected state is reached
+  useEffect(() => {
+    if (pendingAction === 'connect' && connectionDetails?.isConnected) {
+      setPendingAction(null);
+      expectedConnectionState.current = null;
+    } else if (pendingAction === 'disconnect' && !connectionDetails?.isConnected) {
+      setPendingAction(null);
+      expectedConnectionState.current = null;
+    }
+  }, [connectionDetails?.isConnected, pendingAction]);
+
   const handleConnectDisconnect = async () => {
     if (actionInProgress) return; // Prevent double actions
     setActionInProgress(true);
-    if (!selectedServer && !connectionDetails?.isConnected) {
-      alert("Please select a server from the server list first.");
+    try {
+      if (!selectedServer && !connectionDetails?.isConnected) {
+        alert("Please select a server from the server list first.");
+        return;
+      }
+      if (connectionDetails?.isConnected) {
+        setPendingAction('disconnect');
+        expectedConnectionState.current = false;
+        await disconnectProxy();
+        await refreshConnectionDetails();
+      } else if (selectedServer) {
+        setPendingAction('connect');
+        expectedConnectionState.current = true;
+        await connectProxy(selectedServer);
+        await refreshConnectionDetails();
+      }
+    } finally {
       setActionInProgress(false);
-      return;
     }
-    if (connectionDetails?.isConnected) {
-      await disconnectProxy();
-      await refreshConnectionDetails();
-      setActionInProgress(false);
-      return;
-    } else if (selectedServer) {
-      await connectProxy(selectedServer);
-      await refreshConnectionDetails();
-      setActionInProgress(false);
-      return;
-    }
-    setActionInProgress(false);
   };
 
   const displayServerName = selectedServer?.city || selectedServer?.country || "Select a server";
@@ -121,18 +136,18 @@ const DashboardPage: React.FC = () => {
           <Typography
             variant="subtitle1"
             sx={{
-              color: isConnecting
-                ? (connectionDetails.isConnected ? theme.palette.success.main : theme.palette.error.main)
+              color: isConnecting || pendingAction
+                ? (pendingAction === 'disconnect' ? theme.palette.success.main : theme.palette.error.main)
                 : (connectionDetails.isConnected ? theme.palette.success.main : theme.palette.error.main),
               fontWeight: 600,
               mb: 1,
               letterSpacing: 1,
             }}
           >
-            {isConnecting
-              ? (connectionDetails.isConnected
-                ? <span style={{ color: theme.palette.success.main }}>Disconnecting...</span>
-                : <span style={{ color: theme.palette.error.main }}>Connecting...</span>)
+            {(isConnecting || pendingAction)
+              ? (pendingAction === 'disconnect'
+                ? <span style={{ color: theme.palette.error.main }}>Disconnecting...</span>
+                : <span style={{ color: theme.palette.success.main }}>Connecting...</span>)
               : (connectionDetails.isConnected ? 'Connected' : 'Disconnected')}
           </Typography>
 
