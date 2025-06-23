@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Server } from '../../domain/models/Server';
 import { ConnectionDetails } from '../../domain/models/ConnectionDetails';
 import { ProxyService } from '../../application/services/ProxyService';
@@ -11,6 +11,7 @@ export const useProxy = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hookError, setHookError] = useState<string | null>(null);
   const [proxyError, setProxyError] = useState<string | null>(null);
+  const autoDisconnectTimer = useRef<NodeJS.Timeout | null>(null);
 
   const fetchConnectionDetails = useCallback(async () => {
     setHookError(null);
@@ -84,6 +85,31 @@ export const useProxy = () => {
       setIsLoading(false);
     }
   }, [fetchConnectionDetails]);
+
+  // Auto-disconnect effect: if connected but IP stays loading for >5s, disconnect
+  useEffect(() => {
+    const ipIsLoading = connectionDetails?.isConnected && (!connectionDetails.currentIp || connectionDetails.currentIp === '' || connectionDetails.currentIp === 'Error fetching IP');
+    if (ipIsLoading) {
+      if (!autoDisconnectTimer.current) {
+        autoDisconnectTimer.current = setTimeout(async () => {
+          await proxyService.disconnect();
+          const details = await proxyService.getConnectionDetails();
+          setConnectionDetails(details);
+        }, 5000); // 5 seconds
+      }
+    } else {
+      if (autoDisconnectTimer.current) {
+        clearTimeout(autoDisconnectTimer.current);
+        autoDisconnectTimer.current = null;
+      }
+    }
+    return () => {
+      if (autoDisconnectTimer.current) {
+        clearTimeout(autoDisconnectTimer.current);
+        autoDisconnectTimer.current = null;
+      }
+    };
+  }, [connectionDetails?.isConnected, connectionDetails?.currentIp]);
 
   return {
     connectionDetails,
